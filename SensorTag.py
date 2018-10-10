@@ -102,7 +102,7 @@ class cyber_glove():
         global fuse
         temp=str(msg.payload)[2:55]
         valueByte = bytearray.fromhex(temp)
-        scaleacc = 16384
+        scaleacc = 4096
         scalegyr = 32768/250
         scalemag = 32760/49120
         accx = (s16((valueByte[7]<<8) + valueByte[6]))/scaleacc

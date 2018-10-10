@@ -8,6 +8,7 @@ from deltat import DeltaT
 import numpy as np 
 import quaternion
 from numpy.linalg import inv
+from pykalman import KalmanFilter
 
 class Fusion(object):
     declination = 0                       # Optional offset for true north. A +ve value adds to heading
@@ -23,6 +24,64 @@ class Fusion(object):
         self.pitch = 0
         self.heading = 0
         self.roll = 0
+        dt = 0.05
+        # transition_matrix  
+        A = np.matrix([[1.0, 0.0, 0.0, dt, 0.0, 0.0, 1/2.0*dt**2, 0.0, 0.0],
+                      [0.0, 1.0, 0.0, 0.0,  dt, 0.0, 0.0, 1/2.0*dt**2, 0.0],
+                      [0.0, 0.0, 1.0, 0.0, 0.0,  dt, 0.0, 0.0, 1/2.0*dt**2],
+                      [0.0, 0.0, 0.0, 1.0, 0.0, 0.0,  dt, 0.0, 0.0],
+                      [0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0,  dt, 0.0],
+                      [0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0,  dt],
+                      [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0],
+                      [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0],
+                      [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0]])
+
+        # observation_matrix   
+        H = np.matrix([[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0],
+                       [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0],
+                       [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0]])
+
+        # In[6]:
+
+        rp = 0.002 # Variance of Acc measurement
+        R = np.matrix([[rp, 0.0, 0.0],
+                       [0.0, rp, 0.0],
+                       [0.0, 0.0, rp]])
+
+        # In[8]:
+
+        sa = 0.1
+        G = np.matrix([[1/2.0*dt**2],
+                       [1/2.0*dt**2],
+                       [1/2.0*dt**2],
+                       [dt],
+                       [dt],
+                       [dt],
+                       [1.0],
+                       [1.0],
+                       [1.0]])
+        Q = G*G.T*sa**2
+        # initial_state_mean
+        X0 = np.matrix([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.01171875, -0.002685546875, 0.260223388671875]).T
+
+        # initial_state_covariance
+        P0 = np.matrix([[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, rp, 0.0, 0.0],
+                       [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, rp, 0.0],
+                       [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, rp]])
+
+        n_dim_state = 9
+        self.new_state_means = np.zeros(n_dim_state)
+        self.new_state_covariances = np.zeros((n_dim_state, n_dim_state))
+        self.last_state_means = X0
+        self.last_state_covariances = P0
+
+        self.kf = KalmanFilter(transition_matrices = A, 
+                          observation_matrices = H, 
+                          transition_covariance = Q, 
+                          observation_covariance = R, 
+                          initial_state_mean = X0, 
+                          initial_state_covariance = P0)
+
 
     def calibrate(self, mag):
         magxyz = tuple(mag)
@@ -35,10 +94,9 @@ class Fusion(object):
         self.scale = (self.avg_delta/self.avg_del[0] if self.avg_del[0] else 0, self.avg_delta/self.avg_del[1] if self.avg_del[1] else 0,
          self.avg_delta/self.avg_del[2] if self.avg_del[2] else 0)
 
-
     def update(self, accel, gyro, mag, ts=None):     # 3-tuples (x, y, z) for accel, gyro and mag data
         my, mx, mz = ((mag[x] - self.magbias[x])*self.scale[x] for x in range(3)) # Units irrelevant (normalised)
-        ax, ay, az = accel                  # Units irrelevant (normalised)
+        ax, ay, az = accel                # Units irrelevant (normalised)
         gx, gy, gz = (radians(x) for x in gyro)  # Units deg/s
         q1, q2, q3, q4 = (self.q[x] for x in range(4))   # short name local variable for readability
         # Auxiliary variables to avoid repeated arithmetic
@@ -60,7 +118,7 @@ class Fusion(object):
         q4q4 = q4 * q4
 
         mz=-mz
-
+        acceleration = np.matrix([ax,ay,az]).T
         # Normalise accelerometer measurement
         norm = sqrt(ax * ax + ay * ay + az * az)
         if (norm == 0):
@@ -146,3 +204,12 @@ class Fusion(object):
         self.roll = degrees(atan2(2.0 * (self.q[0] * self.q[1] + self.q[2] * self.q[3]),
             self.q[0] * self.q[0] - self.q[1] * self.q[1] - self.q[2] * self.q[2] + self.q[3] * self.q[3]))
 
+        
+        self.new_state_means, self.new_state_covariances = (
+        kf.filter_update(
+            self.last_state_means,
+            self.last_state_covariances,
+            acceleration
+        ))
+
+        print (self.last_state_means)
