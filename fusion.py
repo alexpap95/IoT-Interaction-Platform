@@ -2,19 +2,22 @@ try:
     import utime as time
 except ImportError:
     import time
-
+# from mpl_toolkits.mplot3d import Axes3D  
+# import matplotlib.animation as animation
+# import matplotlib.pyplot as plt
 from math import sqrt, atan2, asin, degrees, radians
 from deltat import DeltaT
 import numpy as np 
 import quaternion
-from numpy.linalg import inv
-from pykalman import KalmanFilter
+from numpy.linalg import inv, pinv
+
 
 class Fusion(object):
     declination = 0                       # Optional offset for true north. A +ve value adds to heading
     magmax = [-1000, -1000, -1000]
-    magmin = [1000, 1000, 1000] 
-    movement = [0,0,0]                      
+    magmin = [1000, 1000, 1000]   
+    T=0
+    open('static', 'w').close()         
     def __init__(self, timediff=None):
         self.magbias = (0, 0, 0)            # local magnetic bias factors: set from calibration`               
         self.deltat = DeltaT(timediff)      # Time between updates
@@ -26,7 +29,7 @@ class Fusion(object):
         self.roll = 0
         dt = 0.05
         # transition_matrix  
-        A = np.matrix([[1.0, 0.0, 0.0, dt, 0.0, 0.0, 1/2.0*dt**2, 0.0, 0.0],
+        self.A = np.matrix([[1.0, 0.0, 0.0, dt, 0.0, 0.0, 1/2.0*dt**2, 0.0, 0.0],
                       [0.0, 1.0, 0.0, 0.0,  dt, 0.0, 0.0, 1/2.0*dt**2, 0.0],
                       [0.0, 0.0, 1.0, 0.0, 0.0,  dt, 0.0, 0.0, 1/2.0*dt**2],
                       [0.0, 0.0, 0.0, 1.0, 0.0, 0.0,  dt, 0.0, 0.0],
@@ -37,14 +40,16 @@ class Fusion(object):
                       [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0]])
 
         # observation_matrix   
-        H = np.matrix([[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0],
+        self.H = np.matrix([[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0],
                        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0],
                        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0]])
 
+        self.I = np.eye(9)
+
         # In[6]:
 
-        rp = 0.002 # Variance of Acc measurement
-        R = np.matrix([[rp, 0.0, 0.0],
+        rp= 0.002 # Variance of Acc measurement
+        self.R = np.matrix([[rp, 0.0, 0.0],
                        [0.0, rp, 0.0],
                        [0.0, 0.0, rp]])
 
@@ -60,27 +65,19 @@ class Fusion(object):
                        [1.0],
                        [1.0],
                        [1.0]])
-        Q = G*G.T*sa**2
+        self.Q = G*G.T*sa**2
         # initial_state_mean
-        X0 = np.matrix([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.01171875, -0.002685546875, 0.260223388671875]).T
+        self.x = np.matrix([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]).T
 
-        # initial_state_covariance
-        P0 = np.matrix([[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, rp, 0.0, 0.0],
-                       [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, rp, 0.0],
-                       [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, rp]])
-
-        n_dim_state = 9
-        self.new_state_means = np.zeros(n_dim_state)
-        self.new_state_covariances = np.zeros((n_dim_state, n_dim_state))
-        self.last_state_means = X0
-        self.last_state_covariances = P0
-
-        self.kf = KalmanFilter(transition_matrices = A, 
-                          observation_matrices = H, 
-                          transition_covariance = Q, 
-                          observation_covariance = R, 
-                          initial_state_mean = X0, 
-                          initial_state_covariance = P0)
+        self.P = np.matrix([[1.0, 0.0, 0.0, 0.0, 0.0, 0.0, rp, 0.0, 0.0],
+                      [0.0, 1.0, 0.0, 0.0,  0.0, 0.0, 0.0, rp, 0.0],
+                      [0.0, 0.0, 1.0, 0.0, 0.0,  0.0, 0.0, 0.0, 0.02],
+                      [0.0, 0.0, 0.0, 1.0, 0.0, 0.0,  0.0, 0.0, 0.0],
+                      [0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0,  0.0, 0.0],
+                      [0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0,  0.0],
+                      [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0],
+                      [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0],
+                      [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0]])
 
 
     def calibrate(self, mag):
@@ -118,7 +115,7 @@ class Fusion(object):
         q4q4 = q4 * q4
 
         mz=-mz
-        acceleration = np.matrix([ax,ay,az]).T
+        
         # Normalise accelerometer measurement
         norm = sqrt(ax * ax + ay * ay + az * az)
         if (norm == 0):
@@ -127,7 +124,7 @@ class Fusion(object):
         ax *= norm
         ay *= norm
         az *= norm
-
+        
         # Normalise magnetometer measurement
         norm = sqrt(mx * mx + my * my + mz * mz)
         if (norm == 0):
@@ -167,6 +164,8 @@ class Fusion(object):
               + _2bz * (q2q4 - q1q3) - mx) + (-_2bx * q1 + _2bz * q3) * (_2bx * (q2q3 - q1q4) + _2bz * (q1q2 + q3q4) - my)
               + _2bx * q2 * (_2bx * (q1q3 + q2q4) + _2bz * (0.5 - q2q2 - q3q3) - mz))
 
+        Z = np.matrix([ax,ay,az]).T
+        
         norm = 1 / sqrt(s1 * s1 + s2 * s2 + s3 * s3 + s4 * s4)    # normalise step magnitude
         s1 *= norm
         s2 *= norm
@@ -181,6 +180,15 @@ class Fusion(object):
 
         # Integrate to yield quaternion
         deltat = self.deltat(ts)
+
+        # self.T += deltat
+        # if (self.T>1):
+        #     self.x[5]=0
+        # elif (self.T>2):
+        #     self.x[3]=self.x[4]=self.x[5]=0
+        #     self.T=0
+
+
         q1 += qDot1 * deltat
         q2 += qDot2 * deltat
         q3 += qDot3 * deltat
@@ -205,11 +213,31 @@ class Fusion(object):
             self.q[0] * self.q[0] - self.q[1] * self.q[1] - self.q[2] * self.q[2] + self.q[3] * self.q[3]))
 
         
-        self.new_state_means, self.new_state_covariances = (
-        kf.filter_update(
-            self.last_state_means,
-            self.last_state_covariances,
-            acceleration
-        ))
+        # Project the state ahead
+        self.x = self.A*self.x
+    
+        # Project the error covariance ahead
+        self.P = self.A*self.P*(self.A).T + self.Q    
+        
+        
+        # Measurement Update (Correction)
+        # ===============================
+        # Compute the Kalman Gain
+        S = self.H*self.P*(self.H).T + self.R
+        K = (self.P*(self.H).T) * pinv(S)
 
-        print (self.last_state_means)
+        
+        # Update the estimate via z
+        y = Z - (self.H*self.x)                            # Innovation or Residual
+        self.x = self.x + (K*y)
+        
+        # Update the error covariance
+        self.P = (self.I - (K*self.H))*self.P
+        
+        with open('static', 'a') as f:
+            f.write((str(self.x[0]).replace('[','')).replace(']]',', ') 
+                + (str(self.x[1]).replace('[','')).replace(']]',', ') + (str(self.x[2]).replace('[','')).replace(']]','') + '\n')
+        #print (self.x[0],self.x[1],self.x[2])
+        # ani = animation.FuncAnimation(self.fig, self.animate, fargs=(self.x[0], self.x[1], self.x[3]))
+        # plt.show()
+        

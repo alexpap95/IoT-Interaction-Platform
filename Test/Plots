@@ -1,0 +1,38 @@
+from mpl_toolkits.mplot3d import Axes3D  # noqa: F401 unused import
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+
+data=pd.read_csv('C:/Users/DELL/Documents/GitHub/IoT-Interaction-Platform./static', header=0)
+x_z=np.array((data[data.columns[0]]))
+y_z=np.array((data[data.columns[1]]))
+z_z=np.array((data[data.columns[2]]))
+ax.scatter(x_z, y_z, z_z)
+
+plt.show()
+
+data=pd.read_csv('C:/Users/DELL/Documents/GitHub/IoT-Interaction-Platform./mov_x', header=0)
+x_y=np.array((data[data.columns[0]]))
+y_y=np.array((data[data.columns[1]]))
+z_y=np.array((data[data.columns[2]]))
+ax.scatter(x_y, y_y, z_y)
+
+data=pd.read_csv('C:/Users/DELL/Documents/GitHub/IoT-Interaction-Platform./mov_y', header=0)
+x_x=np.array((data[data.columns[0]]))
+y_x=np.array((data[data.columns[1]]))
+z_x=np.array((data[data.columns[2]]))
+ax.scatter(x_x, y_x, z_x)
+
+data=pd.read_csv('C:/Users/DELL/Documents/GitHub/IoT-Interaction-Platform./mov_z', header=0)
+x_z=np.array((data[data.columns[0]]))
+y_z=np.array((data[data.columns[1]]))
+z_z=np.array((data[data.columns[2]]))
+ax.scatter(x_z, y_z, z_z)
+
+
+
+
+

@@ -42,7 +42,7 @@ G = np.matrix([[1/2.0*dt**2],
                [1.0]])
 Q = G*G.T*sa**2
 # initial_state_mean
-x = np.matrix([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.01171875, -0.002685546875, 0.260223388671875]).T
+X0 = np.matrix([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.01171875, -0.002685546875, 0.260223388671875]).T
 
 # initial_state_covariance
 P0 = np.matrix([[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, rp, 0.0, 0.0],
@@ -50,10 +50,10 @@ P0 = np.matrix([[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, rp, 0.0, 0.0],
                [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, rp]])
 
 n_dim_state = 9
-new_state_means = np.zeros(n_dim_state)
-new_state_covariances = np.zeros(n_dim_state, n_dim_state)
-last_state_means = np.zeros(n_dim_state)
-last_state_covariances = np.zeros(n_dim_state, n_dim_state)
+new_state_means = np.zeros(n_dim_state).T
+new_state_covariances = np.zeros((n_dim_state, n_dim_state))
+last_state_means = np.zeros(n_dim_state).T
+last_state_covariances = np.zeros((n_dim_state, n_dim_state))
 
 kf = KalmanFilter(transition_matrices = A, 
                   observation_matrices = H, 
