@@ -17,7 +17,7 @@ class Fusion(object):
     magmax = [-1000, -1000, -1000]
     magmin = [1000, 1000, 1000]   
     T=0
-    open('static', 'w').close()         
+    open('mov_x', 'w').close()         
     def __init__(self, timediff=None):
         self.magbias = (0, 0, 0)            # local magnetic bias factors: set from calibration`               
         self.deltat = DeltaT(timediff)      # Time between updates
@@ -27,6 +27,7 @@ class Fusion(object):
         self.pitch = 0
         self.heading = 0
         self.roll = 0
+        self.acc = np.matrix([0,0,0]).T
         dt = 0.05
         # transition_matrix  
         self.A = np.matrix([[1.0, 0.0, 0.0, dt, 0.0, 0.0, 1/2.0*dt**2, 0.0, 0.0],
@@ -48,14 +49,14 @@ class Fusion(object):
 
         # In[6]:
 
-        rp= 0.002 # Variance of Acc measurement
+        rp= 0.035 # Variance of Acc measurement
         self.R = np.matrix([[rp, 0.0, 0.0],
                        [0.0, rp, 0.0],
                        [0.0, 0.0, rp]])
 
         # In[8]:
 
-        sa = 0.1
+        sa = 1
         G = np.matrix([[1/2.0*dt**2],
                        [1/2.0*dt**2],
                        [1/2.0*dt**2],
@@ -69,9 +70,9 @@ class Fusion(object):
         # initial_state_mean
         self.x = np.matrix([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]).T
 
-        self.P = np.matrix([[1.0, 0.0, 0.0, 0.0, 0.0, 0.0, rp, 0.0, 0.0],
-                      [0.0, 1.0, 0.0, 0.0,  0.0, 0.0, 0.0, rp, 0.0],
-                      [0.0, 0.0, 1.0, 0.0, 0.0,  0.0, 0.0, 0.0, 0.02],
+        self.P = np.matrix([[1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                      [0.0, 1.0, 0.0, 0.0,  0.0, 0.0, 0.0, 0.0, 0.0],
+                      [0.0, 0.0, 1.0, 0.0, 0.0,  0.0, 0.0, 0.0, 0.0],
                       [0.0, 0.0, 0.0, 1.0, 0.0, 0.0,  0.0, 0.0, 0.0],
                       [0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0,  0.0, 0.0],
                       [0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0,  0.0],
@@ -115,7 +116,12 @@ class Fusion(object):
         q4q4 = q4 * q4
 
         mz=-mz
-        
+        if (abs(ax-self.acc[0]) > 0.14):
+            self.acc[0]=ax
+        if (abs(ax-self.acc[1]) > 0.14):
+            self.acc[1]=ay
+        if (abs(az-self.acc[2]-1) > 0.14):
+            self.acc[2]=az-1
         # Normalise accelerometer measurement
         norm = sqrt(ax * ax + ay * ay + az * az)
         if (norm == 0):
@@ -164,7 +170,6 @@ class Fusion(object):
               + _2bz * (q2q4 - q1q3) - mx) + (-_2bx * q1 + _2bz * q3) * (_2bx * (q2q3 - q1q4) + _2bz * (q1q2 + q3q4) - my)
               + _2bx * q2 * (_2bx * (q1q3 + q2q4) + _2bz * (0.5 - q2q2 - q3q3) - mz))
 
-        Z = np.matrix([ax,ay,az]).T
         
         norm = 1 / sqrt(s1 * s1 + s2 * s2 + s3 * s3 + s4 * s4)    # normalise step magnitude
         s1 *= norm
@@ -181,14 +186,6 @@ class Fusion(object):
         # Integrate to yield quaternion
         deltat = self.deltat(ts)
 
-        # self.T += deltat
-        # if (self.T>1):
-        #     self.x[5]=0
-        # elif (self.T>2):
-        #     self.x[3]=self.x[4]=self.x[5]=0
-        #     self.T=0
-
-
         q1 += qDot1 * deltat
         q2 += qDot2 * deltat
         q3 += qDot3 * deltat
@@ -196,15 +193,7 @@ class Fusion(object):
         norm = 1 / sqrt(q1 * q1 + q2 * q2 + q3 * q3 + q4 * q4)    # normalise quaternion
         
         self.q = q1 * norm, q2 * norm, q3 * norm, q4 * norm
-        # q=np.quaternion(self.q[0],self.q[1],self.q[2],self.q[3])
-        # R=quaternion.as_rotation_matrix(q)
-        # invR=inv(R)
-        # acc=[[ax],[ay],[az-1]]
-        # absolute_acc=np.dot(invR,acc)
-        # dt=np.full((3, 1), 0.001)
-        # print (dt)
-        # movement=np.multiply(absolute_acc,dt)
-        # print(movement)
+    
 
         self.heading = self.declination + degrees(atan2(2.0 * (self.q[1] * self.q[2] + self.q[0] * self.q[3]),
             self.q[0] * self.q[0] + self.q[1] * self.q[1] - self.q[2] * self.q[2] - self.q[3] * self.q[3]))
@@ -228,16 +217,13 @@ class Fusion(object):
 
         
         # Update the estimate via z
-        y = Z - (self.H*self.x)                            # Innovation or Residual
+        y = self.acc - (self.H*self.x)                            # Innovation or Residual
         self.x = self.x + (K*y)
         
         # Update the error covariance
         self.P = (self.I - (K*self.H))*self.P
         
-        with open('static', 'a') as f:
-            f.write((str(self.x[0]).replace('[','')).replace(']]',', ') 
-                + (str(self.x[1]).replace('[','')).replace(']]',', ') + (str(self.x[2]).replace('[','')).replace(']]','') + '\n')
-        #print (self.x[0],self.x[1],self.x[2])
-        # ani = animation.FuncAnimation(self.fig, self.animate, fargs=(self.x[0], self.x[1], self.x[3]))
-        # plt.show()
+        with open('mov_x', 'a') as f:
+            f.write((str(2*self.x[0]).replace('[','')).replace(']]',', ') 
+                + (str(2*self.x[1]).replace('[','')).replace(']]',', ') + (str(2*self.x[2]).replace('[','')).replace(']]','') + '\n')
         

@@ -2,9 +2,10 @@ import paho.mqtt.client as mqtt
 import time
 ## Change to Sensor Address (Without :)
 sensor_mac = "B0B448C44883"
-i=100
+i=1000
 accmax = [-2, -2, -2]
 accmin = [2, 2, 2] 
+acc = [0,0,0]
 # The callback for when the client receives a CONNACK response from the server.
 def s16(value):
 		return -(value & 0x8000) | (value & 0x7fff)
@@ -27,20 +28,27 @@ def on_message(client, userdata, msg):
 	scaleacc = 4096
 	accx = (s16((valueByte[7]<<8) + valueByte[6]))/scaleacc
 	accy = (s16((valueByte[9]<<8) + valueByte[8]))/scaleacc
-	accz = (s16((valueByte[11]<<8) + valueByte[10]))/scaleacc
-	acc = [accx,accy,accz]
-	accxyz = (accx,accy,accz)
+	accz = (s16((valueByte[11]<<8) + valueByte[10]))/scaleacc-1
+	if (abs(accx-acc[0]) > 0.15):
+		acc[0]=accx
+	if (abs(accy-acc[1]) > 0.15):
+		acc[1]=accy
+	if (abs(accz-acc[2]) > 0.15):
+		acc[2]=accz
 	for x in range(3):
-	    accmax[x] = max(accmax[x], accxyz[x])
-	    accmin[x] = min(accmin[x], accxyz[x])
+	    accmax[x] = max(accmax[x], acc[x])
+	    accmin[x] = min(accmin[x], acc[x])
 	accbias = tuple(map(lambda a, b: (a +b)/2, accmin, accmax))
+	accabs = tuple(map(lambda a, b: (a -b)/2, accmax, accmin))
 	with open('accdata', 'a') as f:
 		f.write(str(acc) + '\n')
 		print(str(acc))
 		i -= 1
 		if (i<0):
 			f.write(str(accbias) + '\n')
+			f.write(str(accabs) + '\n')
 			print("The bias is" + str(accbias))
+			print("The difference is" + str(accabs))
 			client.disconnect()
 		f.close()
 
