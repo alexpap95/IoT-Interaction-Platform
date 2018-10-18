@@ -60,20 +60,6 @@ def s16(value):
 class cyber_glove():
     def __init__(self,msg):
         self.msg=msg
-        '''patern recognision variables'''
-        self.time_start = 0
-        #initialize the clock to off
-        self.clock_state = 0
-        #set the countdown in seconds
-        self.time_window = 7
-        self.first_sequence = []
-        self.second_sequence = []
-        #set the angles which partisepate in the patern recognision
-        self.sequence_angle = [25,43,55,58,60]
-        #seconds left to stop the countdown
-        self.seconds = 7
-        '''tap recognision variable'''
-        self.axes = 'y+'
         '''3d cube variables'''
         self.vertices = [
                     Nodes(-1,0.2,-1.4),
@@ -89,14 +75,10 @@ class cyber_glove():
         '''graphics variables'''
         pygame.init()
         self.screen = pygame.display.set_mode((1366, 768))
-        self.clock = pygame.time.Clock()
         self.FPS = 20
         self.smallfont = pygame.font.SysFont(None,80)
         self.tinyfont = pygame.font.SysFont(None,25)
-        pygame.display.set_caption("Esda Lab")
-        self.arrow = pygame.image.load('arrow.png')
-        #list contains the 'YES' for the recognized paterrn
-        self.succed_patern = []
+        pygame.display.set_caption("SensorTag Wearable")
 
     def set_acc(self,msg):
         global fuse
@@ -280,34 +262,6 @@ class cyber_glove():
             #draw the new angular position of the cube
             pygame.draw.polygon(self.screen,self.colors[face_index],pointlist)
 
-    def pattern_graphics(self):
-        #draw the patterns label
-        self.pattern1_text = self.smallfont.render("Pattern P-P+R+R-", True, black)
-        self.screen.blit(self.pattern1_text,[750,230])
-        #draw the angles of pattern
-        s = 0
-        for each_angle in self.sequence_angle:
-            each_angle = str(each_angle)
-            self.patternangle1 = self.smallfont.render(each_angle + u'\N{DEGREE SIGN}', True, black)
-            self.screen.blit(self.patternangle1,[750,420+s])
-            s += 60
-        #draw the succesive symbol next to each succeded angle
-        if len(self.succed_patern) != 0:
-            k = 0
-            for i in range (0,len(self.succed_patern)):
-                #get a random string
-                newstring = id_generator()
-                newstring = self.smallfont.render("YES", True, green)
-                self.screen.blit(newstring,[850,420+k])
-                k += 60
-
-        #draw an arrow to display the users selection of the pattern
-        self.screen.blit(self.arrow,(630,215))
-        #make the arrow alive :)
-        for i in range(0,20):
-                self.screen.blit(self.arrow,(630 - i, 215))
-                pygame.display.flip()
-
     def run(self):
         global fuse,oldpitch,oldroll,oldheading,client,j,k,sumpitch,sumroll,sumheading
         if (j<samples):
@@ -334,24 +288,6 @@ class cyber_glove():
         self.pitch=sumpitch//samples
         self.roll=sumroll//samples
         self.heading=sumheading//samples
-
-        '''GET PITCH AND ROLL ANGLES'''
-        if (self.clock_state == 0):
-            self.first_sequence = initialize_1st_sequence(self.sequence_angle, self.first_sequence)
-            '''SET A COUNTDOWN'''
-            #start the countdown if has to
-            self.clock_state= fire_the_countdown(self.pitch)
-            if self.clock_state == 1:
-                #get current time, this function must run only one time every time period
-                self.time_start = get_current_time()
-            self.succed_patern = []
-            '''GET THE PROGRESS OF THE PATERN'''
-        else:
-            self.first_sequence,self.succed_patern = patern_recognisionPprR(self.pitch,self.roll,self.sequence_angle,
-            self.first_sequence,self.succed_patern)
-            #print self.first_sequence
-            #check if time is over
-            self.clock_state, self.seconds = get_clock(self.time_start, self.time_window)
         '''DRAW THE GRAPHICS'''
         #draw the graphical enviroment white
         pygame.draw.rect(self.screen,(255,255,255),(0,0,1366,768))

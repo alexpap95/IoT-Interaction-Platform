@@ -12,8 +12,7 @@ from numpy.linalg import inv
 class Fusion(object):
     declination = 0                       # Optional offset for true north. A +ve value adds to heading
     magmax = [-1000, -1000, -1000]
-    magmin = [1000, 1000, 1000] 
-    movement = [0,0,0]                      
+    magmin = [1000, 1000, 1000]                    
     def __init__(self, timediff=None):
         self.magbias = (0, 0, 0)            # local magnetic bias factors: set from calibration`               
         self.deltat = DeltaT(timediff)      # Time between updates
@@ -130,16 +129,6 @@ class Fusion(object):
         norm = 1 / sqrt(q1 * q1 + q2 * q2 + q3 * q3 + q4 * q4)    # normalise quaternion
         
         self.q = q1 * norm, q2 * norm, q3 * norm, q4 * norm
-        # q=np.quaternion(self.q[0],self.q[1],self.q[2],self.q[3])
-        # R=quaternion.as_rotation_matrix(q)
-        # invR=inv(R)
-        # acc=[[ax],[ay],[az-1]]
-        # absolute_acc=np.dot(invR,acc)
-        # dt=np.full((3, 1), 0.001)
-        # print (dt)
-        # movement=np.multiply(absolute_acc,dt)
-        # print(movement)
-
         self.heading = self.declination + degrees(atan2(2.0 * (self.q[1] * self.q[2] + self.q[0] * self.q[3]),
             self.q[0] * self.q[0] + self.q[1] * self.q[1] - self.q[2] * self.q[2] - self.q[3] * self.q[3]))
         self.pitch = degrees(-asin(2.0 * (self.q[1] * self.q[3] - self.q[0] * self.q[2])))
