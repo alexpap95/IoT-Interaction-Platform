@@ -1,8 +1,5 @@
-import math, time, pygame, random, string
 import numpy as np 
 import quaternion
-from numpy.linalg import inv
-from operator import itemgetter
 
 class Nodes:
     def __init__(self, x = 0, y = 0, z = 0):

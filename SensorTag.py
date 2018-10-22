@@ -1,7 +1,6 @@
 import paho.mqtt.client as mqtt
-import requests
 import json
-import time, pygame, ctypes
+import time, pygame
 from Libraries import *
 from operator import itemgetter
 from fusion import Fusion
@@ -46,8 +45,8 @@ def main():
         print("Disconnected with result code "+str(rc))
         pygame.quit()
     
-    client = mqtt.Client("wsncontroller@12345678")
-    client.username_pw_set("wsncontroller", "wSnC0ct1r")
+    client = mqtt.Client("testerclient")
+    client.username_pw_set("tester", "tester")
     client.on_connect = on_connect
     client.on_message = on_message
     client.on_disconnect = on_disconnect

@@ -2,12 +2,8 @@ try:
     import utime as time
 except ImportError:
     import time
-
 from math import sqrt, atan2, asin, degrees, radians
 from deltat import DeltaT
-import numpy as np 
-import quaternion
-from numpy.linalg import inv
 
 class Fusion(object):
     declination = 0                       # Optional offset for true north. A +ve value adds to heading
