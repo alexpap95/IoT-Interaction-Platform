@@ -45,8 +45,8 @@ def main():
         print("Disconnected with result code "+str(rc))
         pygame.quit()
     
-    client = mqtt.Client("testerclient")
-    client.username_pw_set("tester", "tester")
+    client = mqtt.Client("wsncontroller@12345678")
+    client.username_pw_set("wsncontroller", "wSnC0ct1r")
     client.on_connect = on_connect
     client.on_message = on_message
     client.on_disconnect = on_disconnect
