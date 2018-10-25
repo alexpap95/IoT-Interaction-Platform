@@ -1,7 +1,7 @@
 import paho.mqtt.client as mqtt
 import json
 import time, pygame
-from Libraries import *
+import numpy as np
 from operator import itemgetter
 from fusion import Fusion
 
@@ -50,7 +50,7 @@ def main():
     client.on_connect = on_connect
     client.on_message = on_message
     client.on_disconnect = on_disconnect
-    client.connect("192.168.0.23", 1883, 60)
+    client.connect("192.168.1.6", 1883, 60)
     client.loop_forever(0.01)
 
 def s16(value):
@@ -73,11 +73,9 @@ class cyber_glove():
         self.colors = [(255,69,0),(255,165,0),(0,255,0),(131,137,150),(0,0,255),(255,0,0)]
         '''graphics variables'''
         pygame.init()
-        self.screen = pygame.display.set_mode((1366, 768))
-        self.FPS = 20
+        self.screen = pygame.display.set_mode((740, 700))
         self.smallfont = pygame.font.SysFont(None,80)
-        self.tinyfont = pygame.font.SysFont(None,25)
-        pygame.display.set_caption("SensorTag Wearable")
+        pygame.display.set_caption("Wearable IMU")
 
     def set_acc(self,msg):
         global fuse
@@ -109,10 +107,6 @@ class cyber_glove():
         elif digits == 4:
             self.screen_text = self.smallfont.render("ROLL", True, black)
             self.screen.blit(self.screen_text,[250,590])
-            pygame.draw.rect(self.screen,black,(x,y,digits*70,88))
-        elif digits == 1:
-            self.screen_text = self.tinyfont.render("CLOCK", True, black)
-            self.screen.blit(self.screen_text,[840,60])
             pygame.draw.rect(self.screen,black,(x,y,digits*70,88))
         elif digits == 5:
             digits=digits-1
@@ -239,7 +233,7 @@ class cyber_glove():
             # Rotate the point around z axis, around X axis roll,  around Y axis pitch
             r = v.rotate(fuse.q)
             # Transform the point from 3D to 2D
-            p = r.project(1366, 768, 256, 2.8)
+            p = r.project(740, 700, 256, 2.8)
             # Put the point in the list of transformed vertices
             t.append(p)
         # Calculate the average Z values of each face.
@@ -289,23 +283,38 @@ class cyber_glove():
         self.heading=sumheading//samples
         '''DRAW THE GRAPHICS'''
         #draw the graphical enviroment white
-        pygame.draw.rect(self.screen,(255,255,255),(0,0,1366,768))
+        pygame.draw.rect(self.screen,(255,255,255),(0,0,740,700))
         #draw the angular position of the cube
         self.rotatetor()
         #draw the values of pitch, roll and countdown clock on a digital lcd
         self.monitor(10,500,3,self.pitch)
         self.monitor(200,500,4,self.roll)
         self.monitor(450,500,5,self.heading)
-        self.monitor(900,80,1, self.seconds)
-        self.pattern_graphics()
         pygame.display.flip()
-        self.clock.tick(self.FPS)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 client.disconnect()
+                
+class Nodes:
+    def __init__(self, x = 0, y = 0, z = 0):
+        self.x, self.y, self.z = float(x), float(y), float(z)
+
+    def rotate(self, q):
+        q1=np.quaternion(q[0],q[1],q[2],q[3])
+        q2=np.conjugate(q1)
+        v=np.quaternion(0,self.x,self.z,self.y)
+        rot=(q1*v)*q2
+        return Nodes(rot.x,rot.z,rot.y)
+
+    def project(self, win_width, win_height, fov, viewer_distance):
+        transformation = [120,220]
+        factor = fov / (viewer_distance + self.z)
+        x = self.x * factor + win_width  / 1.6
+        y = -self.y * factor + win_height / 1.6
+        return Nodes(x - transformation[0], y - transformation[1], self.z)
                  
 if __name__ == '__main__':
-    i=300
+    i=200
     get_data=gdata()
     print('Intro')
     while (i>0):

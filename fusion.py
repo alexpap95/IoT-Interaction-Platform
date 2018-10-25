@@ -1,9 +1,4 @@
-try:
-    import utime as time
-except ImportError:
-    import time
 from math import sqrt, atan2, asin, degrees, radians
-from deltat import DeltaT
 
 class Fusion(object):
     declination = 0                       # Optional offset for true north. A +ve value adds to heading
@@ -131,3 +126,27 @@ class Fusion(object):
         self.roll = degrees(atan2(2.0 * (self.q[0] * self.q[1] + self.q[2] * self.q[3]),
             self.q[0] * self.q[0] - self.q[1] * self.q[1] - self.q[2] * self.q[2] + self.q[3] * self.q[3]))
 
+class DeltaT():
+    def __init__(self, timediff):
+        if timediff is None:
+            self.expect_ts = False
+            raise ValueError('You must define a timediff function')
+        else:
+            self.expect_ts = True
+            self.timediff = timediff
+        self.start_time = None
+
+    def __call__(self, ts):
+        if self.expect_ts:
+            if ts is None:
+                raise ValueError('Timestamp expected but not supplied.')
+        else:
+            raise RuntimeError('Provide timestamps and a timediff function')
+        # ts is now valid
+        if self.start_time is None:  # 1st call: self.start_time is invalid
+            self.start_time = ts
+            return 0.0001  # 100μs notional delay. 1st reading is invalid in any case
+
+        dt = self.timediff(ts, self.start_time)
+        self.start_time = ts
+        return dt
