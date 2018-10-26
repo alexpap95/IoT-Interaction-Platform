@@ -4,6 +4,7 @@ import time, pygame
 import numpy as np
 from operator import itemgetter
 from fusion import Fusion
+import quaternion
 
 black = (0,0,0)
 red = (255,0,0)
@@ -71,7 +72,7 @@ class cyber_glove():
                     Nodes(-1,-0.2,1.4)]
         self.faces = [(0,1,2,3),(1,5,6,2),(5,4,7,6),(4,0,3,7),(0,4,5,1),(3,2,6,7)]
         self.colors = [(255,69,0),(255,165,0),(0,255,0),(131,137,150),(0,0,255),(255,0,0)]
-        '''graphics variables'''
+        '''graphics variables'''        
         pygame.init()
         self.screen = pygame.display.set_mode((740, 700))
         self.smallfont = pygame.font.SysFont(None,80)
