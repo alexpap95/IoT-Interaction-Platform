@@ -29,7 +29,13 @@ def gdata():
         while line:
             yield json.loads(line)  # Convert foreign data format.
             line = f.readline()  # Blocking read.
-                
+def init_quat():
+    with open('centre', 'r') as f:
+        line = f.readline()  # An app would do a blocking read of remote data
+        while line:
+            yield json.loads(line)  # Convert foreign data format.
+            line = f.readline()  # Blocking read.
+            
 def main():
     global glove,client
     def on_connect(client, userdata, flags, rc):
@@ -231,7 +237,7 @@ class cyber_glove():
         t = []
         for v in self.vertices:
             # Rotate the point around z axis, around X axis roll,  around Y axis pitch
-            r = v.rotate(fuse.q)
+            r = v.rotate(fuse. cq)
             # Transform the point from 3D to 2D
             p = r.project(740, 700, 256, 2.8)
             # Put the point in the list of transformed vertices
@@ -320,6 +326,10 @@ if __name__ == '__main__':
     while (i>0):
         getmag=next(get_data)
         fuse.calibrate(getmag)
-        i-=1
+        i-=1    
     print('Cal done. Magnetometer bias vector:', fuse.magbias, fuse.scale)
+    get_centre=init_quat()
+    centre=next(get_centre)
+    fuse.set_centre(centre)
+    print("Centre initialised")
     main()

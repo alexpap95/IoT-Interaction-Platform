@@ -25,12 +25,15 @@ class Fusion(object):
         self.scale = (self.avg_delta/self.avg_del[0] if self.avg_del[0] else 0, self.avg_delta/self.avg_del[1] if self.avg_del[1] else 0,
          self.avg_delta/self.avg_del[2] if self.avg_del[2] else 0)
 
-
+    def set_centre(self,qq):
+        quat = tuple(qq)
+        self.cen = [quat[0], quat[1], quat[2], quat[3]]   # vector to hold centre
+        
     def update(self, accel, gyro, mag, ts=None):     # 3-tuples (x, y, z) for accel, gyro and mag data
         my, mx, mz = ((mag[x] - self.magbias[x])*self.scale[x] for x in range(3)) # Units irrelevant (normalised)
         ax, ay, az = accel                  # Units irrelevant (normalised)
         gx, gy, gz = (radians(x) for x in gyro)  # Units deg/s
-        q1, q2, q3, q4 = (self.q[x] for x in range(4))   # short name local variable for readability
+        q1, q2, q3, q4 = (self.q[x] for x in range(4))
         # Auxiliary variables to avoid repeated arithmetic
         _2q1 = 2 * q1
         _2q2 = 2 * q2
@@ -120,11 +123,20 @@ class Fusion(object):
         norm = 1 / sqrt(q1 * q1 + q2 * q2 + q3 * q3 + q4 * q4)    # normalise quaternion
         
         self.q = q1 * norm, q2 * norm, q3 * norm, q4 * norm
-        self.heading = self.declination + degrees(atan2(2.0 * (self.q[1] * self.q[2] + self.q[0] * self.q[3]),
-            self.q[0] * self.q[0] + self.q[1] * self.q[1] - self.q[2] * self.q[2] - self.q[3] * self.q[3]))
-        self.pitch = degrees(-asin(2.0 * (self.q[1] * self.q[3] - self.q[0] * self.q[2])))
-        self.roll = degrees(atan2(2.0 * (self.q[0] * self.q[1] + self.q[2] * self.q[3]),
-            self.q[0] * self.q[0] - self.q[1] * self.q[1] - self.q[2] * self.q[2] + self.q[3] * self.q[3]))
+        
+        cq1 = self.q[0]*self.cen[0]-self.q[1]*self.cen[1]-self.q[2]*self.cen[2]-self.q[3]*self.cen[3]
+        cq2 = self.q[0]*self.cen[1]+self.q[1]*self.cen[0]-self.q[2]*self.cen[3]+self.q[3]*self.cen[2]
+        cq3 = self.q[0]*self.cen[2]+self.q[1]*self.cen[3]+self.q[2]*self.cen[0]-self.q[3]*self.cen[1]
+        cq4 = self.q[0]*self.cen[3]-self.q[1]*self.cen[2]+self.q[2]*self.cen[1]+self.q[3]*self.cen[0]
+        
+        normc = 1 / sqrt(cq1 * cq1 + cq2 * cq2 + cq3 * cq3 + cq4 * cq4)
+        self.cq = cq1 * normc, cq2 * normc, cq3 * normc, cq4 * normc
+        
+        self.heading = self.declination + degrees(atan2(2.0 * (self.cq[1] * self.cq[2] + self.cq[0] * self.cq[3]),
+            self.cq[0] * self.cq[0] + self.cq[1] * self.cq[1] - self.cq[2] * self.cq[2] - self.cq[3] * self.cq[3]))
+        self.pitch = degrees(-asin(2.0 * (self.cq[1] * self.cq[3] - self.cq[0] * self.cq[2])))
+        self.roll = degrees(atan2(2.0 * (self.cq[0] * self.cq[1] + self.cq[2] * self.cq[3]),
+            self.cq[0] * self.cq[0] - self.cq[1] * self.cq[1] - self.cq[2] * self.cq[2] + self.cq[3] * self.cq[3]))
 
 class DeltaT():
     def __init__(self, timediff):
