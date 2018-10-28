@@ -1,22 +1,37 @@
 from math import sqrt, radians
-import numpy as np
 
-class Fusion(object):                   
-    def __init__(self, timediff=None):                        
+class Fusion(object):
+    magmax = [-1000, -1000, -1000]
+    magmin = [1000, 1000, 1000]                    
+    def __init__(self, timediff=None):
+        self.magbias = (0, 0, 0)            # local magnetic bias factors: set from calibration`               
         self.deltat = DeltaT(timediff)      # Time between updates
         self.q = [1.0, 0.0, 0.0, 0.0]       # vector to hold quaternion
         GyroMeasError = radians(40)         # Original code indicates this leads to a 2 sec response time
         self.beta = sqrt(3.0 / 4.0) * GyroMeasError  # compute beta (see README)
-        self.i=15
+        self.c=15
+        self.T=0
+        
+    def calibrate(self, mag):
+        magxyz = tuple(mag)
+        for x in range(3):
+            self.magmax[x] = max(self.magmax[x], magxyz[x])
+            self.magmin[x] = min(self.magmin[x], magxyz[x])
+        self.magbias = tuple(map(lambda a, b: (a +b)/2, self.magmin, self.magmax))
+        self.avg_del = tuple(map(lambda a, b: (a -b)/2, self.magmax, self.magmin))
+        self.avg_delta = (self.avg_del[0] + self.avg_del[1] + self.avg_del[2]) / 3
+        self.scale = (self.avg_delta/self.avg_del[0] if self.avg_del[0] else 0, self.avg_delta/self.avg_del[1] if self.avg_del[1] else 0,
+         self.avg_delta/self.avg_del[2] if self.avg_del[2] else 0)
 
+    def set_centre(self,qq):
+        quat = tuple(qq)
+        self.cen = [quat[0], quat[1], quat[2], quat[3]]   # vector to hold centre
+        
     def update(self, accel, gyro, mag, ts=None):     # 3-tuples (x, y, z) for accel, gyro and mag data
-        my, mx, mz = mag # Units irrelevant (normalised)
+        my, mx, mz = ((mag[x] - self.magbias[x])*self.scale[x] for x in range(3)) # Units irrelevant (normalised)
         ax, ay, az = accel                  # Units irrelevant (normalised)
-        gx, gy, gz = gyro  # Units deg/s
-        self.accel = accel
-        self.gyro = gyro 
-        self.mag = mag
-        q1, q2, q3, q4 = (self.q[x] for x in range(4))   # short name local variable for readability
+        gx, gy, gz = (radians(x) for x in gyro)  # Units deg/s
+        q1, q2, q3, q4 = (self.q[x] for x in range(4))
         # Auxiliary variables to avoid repeated arithmetic
         _2q1 = 2 * q1
         _2q2 = 2 * q2
@@ -35,6 +50,7 @@ class Fusion(object):
         q3q4 = q3 * q4
         q4q4 = q4 * q4
 
+        
         mz=-mz
 
         # Normalise accelerometer measurement
@@ -107,10 +123,35 @@ class Fusion(object):
         
         self.q = q1 * norm, q2 * norm, q3 * norm, q4 * norm
         
-        self.data=np.array([deltat, self.accel, self.gyro, self.mag, self.q])
+        cq1 = self.q[0]*self.cen[0]-self.q[1]*self.cen[1]-self.q[2]*self.cen[2]-self.q[3]*self.cen[3]
+        cq2 = self.q[0]*self.cen[1]+self.q[1]*self.cen[0]-self.q[2]*self.cen[3]+self.q[3]*self.cen[2]
+        cq3 = self.q[0]*self.cen[2]+self.q[1]*self.cen[3]+self.q[2]*self.cen[0]-self.q[3]*self.cen[1]
+        cq4 = self.q[0]*self.cen[3]-self.q[1]*self.cen[2]+self.q[2]*self.cen[1]+self.q[3]*self.cen[0]
         
-    def write_to_file(self,N):
-        self.data.tofile("data.dat", sep='\n', format = "%f")
+        normc = 1 / sqrt(cq1 * cq1 + cq2 * cq2 + cq3 * cq3 + cq4 * cq4)
+        self.cq = cq1 * normc, cq2 * normc, cq3 * normc, cq4 * normc
+      
+        if (self.c<15 and self.c>0):
+            self.T+=deltat*1000
+        else:
+            self.T=0
+            self.c=15
+        
+        accx=(accel[0]/9.8)*1000
+        accy=(accel[1]/9.8)*1000
+        accz=(accel[2]/9.8)*1000
+        gyrx=gyro[0]*1000
+        gyry=gyro[1]*1000
+        gyrz=gyro[2]*1000
+        
+        self.data=["Null",self.T, accx,accy,accz,gyrx,gyry,gyrz,cq1*1000,cq2*1000,cq3*1000,cq4*1000]
+
+    def write_to_file(self):
+        with open('data.dat', 'a+') as f:
+            f.write(str(self.data) + '\n')
+            self.c-=1
+            print(str(self.data))
+            f.close()
 
 class DeltaT():
     def __init__(self, timediff):
