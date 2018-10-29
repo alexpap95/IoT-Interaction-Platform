@@ -79,7 +79,6 @@ class myThread(threading.Thread):
         self.fuse=fuse
     def run(self):
         time.sleep(5)
-        for n in range(750):
             time.sleep(0.1)
             self.fuse.write_to_file()
         print("done")

@@ -1,7 +1,15 @@
-300 - Hand Raises
-100 - Side Twist
-50 - Static Horizontal Look Left
+600 - Hand Raises
+400 - Side Twists
+200 - Static Horizontal All 4 angles
+200 - Static Reverse-Horizontal All 4 angles
+200 - Static +Large Side, All 4 angles
+200 - Static +Small Side, All 4 angles
+200 - Static -Small Side, All 4 angles
+200 - Static -Large Side, All 4 angles
+900 - Random ones
 
 
 
-82-84 Side Twist (maybe a bit wrong)
+
+
+
