@@ -131,11 +131,6 @@ class Fusion(object):
         normc = 1 / sqrt(cq1 * cq1 + cq2 * cq2 + cq3 * cq3 + cq4 * cq4)
         self.cq = cq1 * normc, cq2 * normc, cq3 * normc, cq4 * normc
       
-        if (self.c<15 and self.c>0):
-            self.T+=deltat*1000
-        else:
-            self.T=0
-            self.c=15
         
         accx=(accel[0]/9.8)*1000
         accy=(accel[1]/9.8)*1000
@@ -143,14 +138,18 @@ class Fusion(object):
         gyrx=gyro[0]*1000
         gyry=gyro[1]*1000
         gyrz=gyro[2]*1000
-        
+        self.det=deltat
         self.data=["Null",self.T, accx,accy,accz,gyrx,gyry,gyrz,cq1*1000,cq2*1000,cq3*1000,cq4*1000]
 
     def write_to_file(self):
         with open('data.dat', 'a+') as f:
             f.write(str(self.data) + '\n')
-            self.c-=1
             print(str(self.data))
+            self.c-=1
+            self.T+=self.det*1000
+            if (self.c==0):
+                self.T=0
+                self.c=15
             f.close()
 
 class DeltaT():
