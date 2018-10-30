@@ -78,26 +78,26 @@ class myThread(threading.Thread):
         super(myThread, self).__init__()
         self.fuse=fuse
     def run(self):
-        time.sleep(5)
-        for n in range(4500):
-            time.sleep(0.1)
-            self.fuse.write_to_file()
-        print("done")
-#        i=15
-#        N=1
-#        while (True):
+#        time.sleep(5)
+#        for n in range(1575):
 #            time.sleep(0.1)
-#            if (i==15):
-#                input ("Rep " + str(N) + " - Press Enter...")
-#                print ("Ready")
-#                time.sleep(0.3)
-#                print ("GO")
-#                time.sleep(0.3)
 #            self.fuse.write_to_file()
-#            i-=1
-#            if (i==0):
-#                i=15
-#                N+=1
+#        print("done")
+        i=15
+        N=1
+        while (True):
+            time.sleep(0.1)
+            if (i==15):
+                input ("Rep " + str(N) + " - Press Enter...")
+                print ("Ready")
+                time.sleep(0.3)
+                print ("GO")
+                time.sleep(0.3)
+            self.fuse.write_to_file()
+            i-=1
+            if (i==0):
+                i=15
+                N+=1
 
 if __name__ == '__main__':
     i=200
