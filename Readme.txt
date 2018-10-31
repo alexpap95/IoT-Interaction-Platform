@@ -12,6 +12,11 @@
 [Gesture Name,Time,accx,accy,accz,gyrox,gyroy,gyroz,q1,q2,q3,q4]
 15samples per gesture
 
+Hand Raise - 1
+Side Raise - 2
+Side Twist - 3
+Null - 4
+
 
 
 

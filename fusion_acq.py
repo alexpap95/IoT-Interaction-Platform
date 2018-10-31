@@ -1,4 +1,5 @@
 from math import sqrt, radians
+import csv
 
 class Fusion(object):
     magmax = [-1000, -1000, -1000]
@@ -139,11 +140,12 @@ class Fusion(object):
         gyry=gyro[1]*1000
         gyrz=gyro[2]*1000
         self.det=deltat
-        self.data=["Side Raise",self.T, accx,accy,accz,gyrx,gyry,gyrz,cq1*1000,cq2*1000,cq3*1000,cq4*1000]
+        self.data=["1",self.T, accx,accy,accz,gyrx,gyry,gyrz,cq1*1000,cq2*1000,cq3*1000,cq4*1000]
 
     def write_to_file(self):
-        with open('data.dat', 'a+') as f:
-            f.write(str(self.data) + '\n')
+        with open('data.csv', 'a+', newline='') as f:
+            wr = csv.writer(f, quoting=csv.QUOTE_MINIMAL)
+            wr.writerow(self.data)
             print(str(self.data))
             self.c-=1
             self.T+=self.det*1000
