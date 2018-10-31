@@ -29,6 +29,7 @@ def gdata():
         while line:
             yield json.loads(line)  # Convert foreign data format.
             line = f.readline()  # Blocking read.
+            
 def init_quat():
     with open('centre', 'r') as f:
         line = f.readline()  # An app would do a blocking read of remote data
