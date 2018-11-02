@@ -140,7 +140,7 @@ class Fusion(object):
         gyry=gyro[1]*1000
         gyrz=gyro[2]*1000
         self.det=deltat
-        self.data=[accx,accy,accz,gyrx,gyry,gyrz,cq1*1000,cq2*1000,cq3*1000,cq4*1000]
+        self.data=[1.0,self.T,accx,accy,accz,gyrx,gyry,gyrz,cq1*1000,cq2*1000,cq3*1000,cq4*1000]
 
     def write_to_file(self):
         with open('testdata.csv', 'a+', newline='') as f:

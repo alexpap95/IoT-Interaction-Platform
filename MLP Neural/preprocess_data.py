@@ -83,7 +83,7 @@ def generate_data(data, target_filename):
     data_y = np.concatenate([data_y, y])
 
     # Dataset is segmented into train and test
-    nb_training_samples = 50400
+    nb_training_samples = 69600
     X_train, y_train = data_x[:nb_training_samples,:], data_y[:nb_training_samples]
     X_test, y_test = data_x[nb_training_samples:,:], data_y[nb_training_samples:]
 
