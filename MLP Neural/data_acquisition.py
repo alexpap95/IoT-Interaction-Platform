@@ -3,7 +3,7 @@ import time
 from fusion_acq import Fusion
 import threading
 import json
-import os
+
 
 ## Change to Sensor Address (Without :)
 sensor_mac = "B0B448C44883"
@@ -78,7 +78,7 @@ class myThread(threading.Thread):
         super(myThread, self).__init__()
         self.fuse=fuse
     def run(self):
-        time.sleep(5)
+        time.sleep(1)
 #        for n in range(3600):
 #            time.sleep(0.1)
 #            self.fuse.write_to_file()
@@ -94,7 +94,6 @@ class myThread(threading.Thread):
                 print ("GO")
                 time.sleep(0.3)
             self.fuse.write_to_file()
-            
             i-=1
             if (i==0):
                 i=15

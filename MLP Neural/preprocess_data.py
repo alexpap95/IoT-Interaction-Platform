@@ -1,9 +1,5 @@
-import os
-import zipfile
-import argparse
 import numpy as np
-import cPickle as cp
-from io import BytesIO
+import pickle as pickle
 from pandas import Series
 import random
 
@@ -15,6 +11,7 @@ NB_SENSOR_CHANNELS = 10
 NORM_MAX_THRESHOLDS = [200, 200, 200, 250000, 250000, 250000, 100, 100, 100, 100]
 
 NORM_MIN_THRESHOLDS = [-200, -200, -200, -250000, -250000, -250000, -100, -100, -100, -100]
+
 
 def normalize(data, max_list, min_list):
     """Normalizes all sensor channels
@@ -83,33 +80,15 @@ def generate_data(data, target_filename):
     data_y = np.concatenate([data_y, y])
 
     # Dataset is segmented into train and test
-    nb_training_samples = 69600
+    count = len(open(data).readlines())
+    nb_training_samples = int(round(0.7*count))
     X_train, y_train = data_x[:nb_training_samples,:], data_y[:nb_training_samples]
     X_test, y_test = data_x[nb_training_samples:,:], data_y[nb_training_samples:]
 
-    print "Final dataset with size: | train {0} | test {1} | ".format(X_train.shape,X_test.shape)
+    print ("Final dataset with size: | train {0} | test {1} | ".format(X_train.shape,X_test.shape))
     obj = [(X_train, y_train), (X_test, y_test)]
-    f = file(target_filename, 'wb')
-    cp.dump(obj, f, protocol=cp.HIGHEST_PROTOCOL)
+    f = open(target_filename, 'wb')
+    pickle.dump(obj, f, protocol=pickle.HIGHEST_PROTOCOL)
     f.close()
 
-def get_args():
-    '''This function parses and return arguments passed in'''
-    parser = argparse.ArgumentParser(
-        description='Preprocess dataset')
-    # Add arguments
-    parser.add_argument(
-        '-i', '--input', type=str, help='Dataset file', required=True)
-    parser.add_argument(
-        '-o', '--output', type=str, help='Processed data file', required=True)
-    # Array for all arguments passed to script
-    args = parser.parse_args()
-    # Assign args to variables
-    dataset = args.input
-    target_filename = args.output
-    # Return all variable values
-    return dataset, target_filename
 
-if __name__ == '__main__':
-    data, output= get_args();
-    generate_data(data, output)
