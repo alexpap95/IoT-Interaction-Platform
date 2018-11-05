@@ -1,5 +1,6 @@
 from math import sqrt, radians
 from test_live import generate_data
+import numpy as np
 
 class Fusion(object):
     magmax = [-1000, -1000, -1000]
@@ -12,6 +13,7 @@ class Fusion(object):
         self.beta = sqrt(3.0 / 4.0) * GyroMeasError  # compute beta (see README)
         self.c=15
         self.T=0
+        self.gesture=np.zeros((15,10))
         
     def calibrate(self, mag):
         magxyz = tuple(mag)
@@ -146,8 +148,9 @@ class Fusion(object):
         gyrz=gyro[2]*1000
         
         self.data=[accx,accy,accz,gyrx,gyry,gyrz,cq1*1000,cq2*1000,cq3*1000,cq4*1000]
-#       some sort of stack here to feed 15 samples each time
-        generate_data(self.data)     
+        self.gesture = np.delete(self.gesture, 0, 0)
+        self.gesture = np.vstack((self.gesture, self.data))
+        generate_data(self.gesture)     
 
 class DeltaT():
     def __init__(self, timediff):

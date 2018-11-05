@@ -58,9 +58,6 @@ def main():
         fuse.update(accel,gyro,mag,time.time())
     
     def on_disconnect(client,userdata,rc):
-        global t
-        t.stop()
-        t.join()
         print("Disconnected with result code "+str(rc))
         
     client = mqtt.Client("wsncontroller@12345678")
@@ -68,7 +65,7 @@ def main():
     client.on_connect = on_connect
     client.on_message = on_message
     client.on_disconnect = on_disconnect
-    client.connect("192.168.1.6", 1883, 60)
+    client.connect("192.168.1.200", 1883, 60)
     client.loop_forever(0.01)
 
 
