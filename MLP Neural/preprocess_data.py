@@ -81,7 +81,7 @@ def generate_data(data, target_filename):
 
     # Dataset is segmented into train and test
     count = len(open(data).readlines())
-    nb_training_samples = int(round(0.8*count))
+    nb_training_samples = int(round(0.7*count))
     X_train, y_train = data_x[:nb_training_samples,:], data_y[:nb_training_samples]
     X_test, y_test = data_x[nb_training_samples:,:], data_y[nb_training_samples:]
 

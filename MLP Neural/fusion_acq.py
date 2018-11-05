@@ -143,7 +143,7 @@ class Fusion(object):
         self.data=[3.0,self.T,accx,accy,accz,gyrx,gyry,gyrz,cq1*1000,cq2*1000,cq3*1000,cq4*1000]
 
     def write_to_file(self):
-        with open('data.csv', 'a+', newline='') as f:
+        with open('new.csv', 'a+', newline='') as f:
             wr = csv.writer(f, quoting=csv.QUOTE_MINIMAL)
             wr.writerow(self.data)
             print(str(self.data))

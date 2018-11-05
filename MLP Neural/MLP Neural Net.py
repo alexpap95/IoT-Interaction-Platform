@@ -27,9 +27,9 @@ def load_dataset(filename):
     return X_train, y_train, X_test, y_test
 
 
-generate_data('datanew.csv', 'dataset.data')
+generate_data('5_11.csv', 'datasetnew.data')
 print("Loading data...")
-X_train, y_train, X_test, y_test = load_dataset('dataset.data')
+X_train, y_train, X_test, y_test = load_dataset('datasetnew.data')
 
 
 first_conc_x = np.concatenate(X_train[0:15, :])
@@ -65,7 +65,7 @@ clf.fit(X_train_mlp, y_train_mlp.flatten())
 y_pred_mlp = clf.predict(X_test_mlp)
 
 print (accuracy_score(y_test_mlp.flatten(), y_pred_mlp))
-joblib.dump(clf, 'MLP.joblib')
+joblib.dump(clf, 'MLPnew.joblib')
 
 
 
