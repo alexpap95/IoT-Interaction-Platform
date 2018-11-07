@@ -27,9 +27,9 @@ def load_dataset(filename):
     return X_train, y_train, X_test, y_test
 
 
-generate_data('5_11.csv', 'datasetnew.data')
+generate_data('reduced_dataset.csv', 'dataset.data')
 print("Loading data...")
-X_train, y_train, X_test, y_test = load_dataset('datasetnew.data')
+X_train, y_train, X_test, y_test = load_dataset('dataset.data')
 
 
 first_conc_x = np.concatenate(X_train[0:15, :])
@@ -56,16 +56,15 @@ for i in range(15, y_test.shape[0], 15):
 y_test_mlp = first_conc_y
 
 
-clf = MLPClassifier(hidden_layer_sizes=(100,100,100), max_iter=500, alpha=0.01,
-                     solver='sgd', verbose=1, random_state=21, tol=0.000000001)
+clf = MLPClassifier(activation='tanh', hidden_layer_sizes=(100,100,100), max_iter=200, alpha=0.0001,
+                     solver='adam', verbose=1, random_state=21, tol=0.0000001)
 
 
 clf.fit(X_train_mlp, y_train_mlp.flatten())
 
 y_pred_mlp = clf.predict(X_test_mlp)
-
 print (accuracy_score(y_test_mlp.flatten(), y_pred_mlp))
-joblib.dump(clf, 'MLPnew.joblib')
+joblib.dump(clf, 'MLP.joblib')
 
 
 
