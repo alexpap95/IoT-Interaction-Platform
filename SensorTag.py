@@ -8,7 +8,7 @@ from fusion import Fusion
 black = (0,0,0)
 red = (255,0,0)
 green = (0,170,0)
-sensor_mac = "B0B448C44883"
+sensor_mac = "B0B448C92601"
 fuse = Fusion(lambda start, end: start-end)
 oldpitch=[0]
 oldroll=[0]
@@ -29,7 +29,6 @@ def gdata():
         while line:
             yield json.loads(line)  # Convert foreign data format.
             line = f.readline()  # Blocking read.
-            
 def init_quat():
     with open('centre', 'r') as f:
         line = f.readline()  # An app would do a blocking read of remote data
@@ -57,7 +56,7 @@ def main():
     client.on_connect = on_connect
     client.on_message = on_message
     client.on_disconnect = on_disconnect
-    client.connect("192.168.1.6", 1883, 60)
+    client.connect("192.168.1.8", 1883, 60)
     client.loop_forever(0.01)
 
 def s16(value):

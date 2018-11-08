@@ -43,5 +43,5 @@ client.username_pw_set("wsncontroller", "wSnC0ct1r")
 client.on_connect = on_connect
 client.on_message = on_message
 client.on_disconnect = on_disconnect
-client.connect("192.168.1.6", 1883, 60)
+client.connect("192.168.1.200", 1883, 60)
 client.loop_forever(0.1)

@@ -1,0 +1,178 @@
+# Tuning hyper-parameters for accuracy
+Best parameters found based on training set
+{'activation': 'tanh', 'alpha': 0.0001, 'hidden_layer_sizes': (100, 100, 100), 'learning_rate': 'constant', 'solver': 'adam'}
+Grid scores on training set:
+0.859 (+/-0.027) for {'activation': 'tanh', 'alpha': 0.0001, 'hidden_layer_sizes': (50, 50, 50), 'learning_rate': 'constant', 'solver': 'sgd'}
+0.951 (+/-0.011) for {'activation': 'tanh', 'alpha': 0.0001, 'hidden_layer_sizes': (50, 50, 50), 'learning_rate': 'constant', 'solver': 'adam'}
+0.863 (+/-0.020) for {'activation': 'tanh', 'alpha': 0.0001, 'hidden_layer_sizes': (50, 50, 50), 'learning_rate': 'adaptive', 'solver': 'sgd'}
+0.952 (+/-0.007) for {'activation': 'tanh', 'alpha': 0.0001, 'hidden_layer_sizes': (50, 50, 50), 'learning_rate': 'adaptive', 'solver': 'adam'}
+0.855 (+/-0.023) for {'activation': 'tanh', 'alpha': 0.0001, 'hidden_layer_sizes': (50, 100, 50), 'learning_rate': 'constant', 'solver': 'sgd'}
+0.957 (+/-0.008) for {'activation': 'tanh', 'alpha': 0.0001, 'hidden_layer_sizes': (50, 100, 50), 'learning_rate': 'constant', 'solver': 'adam'}
+0.864 (+/-0.008) for {'activation': 'tanh', 'alpha': 0.0001, 'hidden_layer_sizes': (50, 100, 50), 'learning_rate': 'adaptive', 'solver': 'sgd'}
+0.958 (+/-0.009) for {'activation': 'tanh', 'alpha': 0.0001, 'hidden_layer_sizes': (50, 100, 50), 'learning_rate': 'adaptive', 'solver': 'adam'}
+0.865 (+/-0.010) for {'activation': 'tanh', 'alpha': 0.0001, 'hidden_layer_sizes': (100, 100, 100), 'learning_rate': 'constant', 'solver': 'sgd'}
+0.964 (+/-0.008) for {'activation': 'tanh', 'alpha': 0.0001, 'hidden_layer_sizes': (100, 100, 100), 'learning_rate': 'constant', 'solver': 'adam'}
+0.864 (+/-0.027) for {'activation': 'tanh', 'alpha': 0.0001, 'hidden_layer_sizes': (100, 100, 100), 'learning_rate': 'adaptive', 'solver': 'sgd'}
+0.963 (+/-0.011) for {'activation': 'tanh', 'alpha': 0.0001, 'hidden_layer_sizes': (100, 100, 100), 'learning_rate': 'adaptive', 'solver': 'adam'}
+0.855 (+/-0.020) for {'activation': 'tanh', 'alpha': 0.05, 'hidden_layer_sizes': (50, 50, 50), 'learning_rate': 'constant', 'solver': 'sgd'}
+0.942 (+/-0.013) for {'activation': 'tanh', 'alpha': 0.05, 'hidden_layer_sizes': (50, 50, 50), 'learning_rate': 'constant', 'solver': 'adam'}
+0.855 (+/-0.018) for {'activation': 'tanh', 'alpha': 0.05, 'hidden_layer_sizes': (50, 50, 50), 'learning_rate': 'adaptive', 'solver': 'sgd'}
+0.944 (+/-0.012) for {'activation': 'tanh', 'alpha': 0.05, 'hidden_layer_sizes': (50, 50, 50), 'learning_rate': 'adaptive', 'solver': 'adam'}
+0.848 (+/-0.018) for {'activation': 'tanh', 'alpha': 0.05, 'hidden_layer_sizes': (50, 100, 50), 'learning_rate': 'constant', 'solver': 'sgd'}
+0.944 (+/-0.015) for {'activation': 'tanh', 'alpha': 0.05, 'hidden_layer_sizes': (50, 100, 50), 'learning_rate': 'constant', 'solver': 'adam'}
+0.853 (+/-0.021) for {'activation': 'tanh', 'alpha': 0.05, 'hidden_layer_sizes': (50, 100, 50), 'learning_rate': 'adaptive', 'solver': 'sgd'}
+0.944 (+/-0.009) for {'activation': 'tanh', 'alpha': 0.05, 'hidden_layer_sizes': (50, 100, 50), 'learning_rate': 'adaptive', 'solver': 'adam'}
+0.853 (+/-0.014) for {'activation': 'tanh', 'alpha': 0.05, 'hidden_layer_sizes': (100, 100, 100), 'learning_rate': 'constant', 'solver': 'sgd'}
+0.949 (+/-0.009) for {'activation': 'tanh', 'alpha': 0.05, 'hidden_layer_sizes': (100, 100, 100), 'learning_rate': 'constant', 'solver': 'adam'}
+0.849 (+/-0.014) for {'activation': 'tanh', 'alpha': 0.05, 'hidden_layer_sizes': (100, 100, 100), 'learning_rate': 'adaptive', 'solver': 'sgd'}
+0.951 (+/-0.010) for {'activation': 'tanh', 'alpha': 0.05, 'hidden_layer_sizes': (100, 100, 100), 'learning_rate': 'adaptive', 'solver': 'adam'}
+0.884 (+/-0.021) for {'activation': 'relu', 'alpha': 0.0001, 'hidden_layer_sizes': (50, 50, 50), 'learning_rate': 'constant', 'solver': 'sgd'}
+0.944 (+/-0.014) for {'activation': 'relu', 'alpha': 0.0001, 'hidden_layer_sizes': (50, 50, 50), 'learning_rate': 'constant', 'solver': 'adam'}
+0.886 (+/-0.023) for {'activation': 'relu', 'alpha': 0.0001, 'hidden_layer_sizes': (50, 50, 50), 'learning_rate': 'adaptive', 'solver': 'sgd'}
+0.941 (+/-0.022) for {'activation': 'relu', 'alpha': 0.0001, 'hidden_layer_sizes': (50, 50, 50), 'learning_rate': 'adaptive', 'solver': 'adam'}
+0.898 (+/-0.018) for {'activation': 'relu', 'alpha': 0.0001, 'hidden_layer_sizes': (50, 100, 50), 'learning_rate': 'constant', 'solver': 'sgd'}
+0.950 (+/-0.012) for {'activation': 'relu', 'alpha': 0.0001, 'hidden_layer_sizes': (50, 100, 50), 'learning_rate': 'constant', 'solver': 'adam'}
+0.893 (+/-0.016) for {'activation': 'relu', 'alpha': 0.0001, 'hidden_layer_sizes': (50, 100, 50), 'learning_rate': 'adaptive', 'solver': 'sgd'}
+0.953 (+/-0.005) for {'activation': 'relu', 'alpha': 0.0001, 'hidden_layer_sizes': (50, 100, 50), 'learning_rate': 'adaptive', 'solver': 'adam'}
+0.904 (+/-0.030) for {'activation': 'relu', 'alpha': 0.0001, 'hidden_layer_sizes': (100, 100, 100), 'learning_rate': 'constant', 'solver': 'sgd'}
+0.959 (+/-0.006) for {'activation': 'relu', 'alpha': 0.0001, 'hidden_layer_sizes': (100, 100, 100), 'learning_rate': 'constant', 'solver': 'adam'}
+0.895 (+/-0.037) for {'activation': 'relu', 'alpha': 0.0001, 'hidden_layer_sizes': (100, 100, 100), 'learning_rate': 'adaptive', 'solver': 'sgd'}
+0.958 (+/-0.010) for {'activation': 'relu', 'alpha': 0.0001, 'hidden_layer_sizes': (100, 100, 100), 'learning_rate': 'adaptive', 'solver': 'adam'}
+0.884 (+/-0.023) for {'activation': 'relu', 'alpha': 0.05, 'hidden_layer_sizes': (50, 50, 50), 'learning_rate': 'constant', 'solver': 'sgd'}
+0.934 (+/-0.011) for {'activation': 'relu', 'alpha': 0.05, 'hidden_layer_sizes': (50, 50, 50), 'learning_rate': 'constant', 'solver': 'adam'}
+0.887 (+/-0.014) for {'activation': 'relu', 'alpha': 0.05, 'hidden_layer_sizes': (50, 50, 50), 'learning_rate': 'adaptive', 'solver': 'sgd'}
+0.935 (+/-0.012) for {'activation': 'relu', 'alpha': 0.05, 'hidden_layer_sizes': (50, 50, 50), 'learning_rate': 'adaptive', 'solver': 'adam'}
+0.892 (+/-0.016) for {'activation': 'relu', 'alpha': 0.05, 'hidden_layer_sizes': (50, 100, 50), 'learning_rate': 'constant', 'solver': 'sgd'}
+0.942 (+/-0.011) for {'activation': 'relu', 'alpha': 0.05, 'hidden_layer_sizes': (50, 100, 50), 'learning_rate': 'constant', 'solver': 'adam'}
+0.890 (+/-0.011) for {'activation': 'relu', 'alpha': 0.05, 'hidden_layer_sizes': (50, 100, 50), 'learning_rate': 'adaptive', 'solver': 'sgd'}
+0.941 (+/-0.010) for {'activation': 'relu', 'alpha': 0.05, 'hidden_layer_sizes': (50, 100, 50), 'learning_rate': 'adaptive', 'solver': 'adam'}
+0.897 (+/-0.020) for {'activation': 'relu', 'alpha': 0.05, 'hidden_layer_sizes': (100, 100, 100), 'learning_rate': 'constant', 'solver': 'sgd'}
+0.944 (+/-0.025) for {'activation': 'relu', 'alpha': 0.05, 'hidden_layer_sizes': (100, 100, 100), 'learning_rate': 'constant', 'solver': 'adam'}
+0.896 (+/-0.024) for {'activation': 'relu', 'alpha': 0.05, 'hidden_layer_sizes': (100, 100, 100), 'learning_rate': 'adaptive', 'solver': 'sgd'}
+0.947 (+/-0.015) for {'activation': 'relu', 'alpha': 0.05, 'hidden_layer_sizes': (100, 100, 100), 'learning_rate': 'adaptive', 'solver': 'adam'}
+Detailed classification report:
+Scores based on full test set
+              precision    recall  f1-score   support
+
+           1       0.98      0.97      0.97      3030
+           2       0.99      0.97      0.98      2940
+           3       0.92      0.95      0.94      2460
+           4       0.98      0.98      0.98      6870
+
+   micro avg       0.97      0.97      0.97     15300
+   macro avg       0.97      0.97      0.97     15300
+weighted avg       0.97      0.97      0.97     15300
+
+
+
+
+
+
+# Tuning hyper-parameters for accuracy
+Best parameters found based on training set
+{'activation': 'tanh', 'alpha': 0.0001, 'hidden_layer_sizes': (100, 100, 100), 'learning_rate': 'constant', 'solver': 'adam'}
+Grid scores on training set:
+0.964 (+/-0.014) for {'activation': 'tanh', 'alpha': 0.0001, 'hidden_layer_sizes': (100, 100, 100), 'learning_rate': 'constant', 'solver': 'adam'}
+0.961 (+/-0.014) for {'activation': 'tanh', 'alpha': 0.001, 'hidden_layer_sizes': (100, 100, 100), 'learning_rate': 'constant', 'solver': 'adam'}
+0.960 (+/-0.014) for {'activation': 'tanh', 'alpha': 0.01, 'hidden_layer_sizes': (100, 100, 100), 'learning_rate': 'constant', 'solver': 'adam'}
+Detailed classification report:
+Scores based on full test set
+              precision    recall  f1-score   support
+
+           1       0.97      0.98      0.97      4365
+           2       0.98      0.98      0.98      4695
+           3       0.96      0.94      0.95      4410
+           4       0.97      0.97      0.97      9480
+
+   micro avg       0.97      0.97      0.97     22950
+   macro avg       0.97      0.97      0.97     22950
+weighted avg       0.97      0.97      0.97     22950
+
+# Tuning hyper-parameters for accuracy
+Best parameters found based on training set
+{'C': 1, 'gamma': 0.1, 'kernel': 'rbf'}
+Grid scores on training set:
+0.408 (+/-0.000) for {'C': 0.001, 'gamma': 0.001, 'kernel': 'rbf'}
+0.408 (+/-0.000) for {'C': 0.001, 'gamma': 0.001, 'kernel': 'sigmoid'}
+0.408 (+/-0.000) for {'C': 0.001, 'gamma': 0.001, 'kernel': 'poly'}
+0.408 (+/-0.000) for {'C': 0.001, 'gamma': 0.01, 'kernel': 'rbf'}
+0.408 (+/-0.000) for {'C': 0.001, 'gamma': 0.01, 'kernel': 'sigmoid'}
+0.408 (+/-0.000) for {'C': 0.001, 'gamma': 0.01, 'kernel': 'poly'}
+0.408 (+/-0.000) for {'C': 0.001, 'gamma': 0.1, 'kernel': 'rbf'}
+0.408 (+/-0.000) for {'C': 0.001, 'gamma': 0.1, 'kernel': 'sigmoid'}
+0.408 (+/-0.000) for {'C': 0.001, 'gamma': 0.1, 'kernel': 'poly'}
+0.408 (+/-0.000) for {'C': 0.01, 'gamma': 0.001, 'kernel': 'rbf'}
+0.408 (+/-0.000) for {'C': 0.01, 'gamma': 0.001, 'kernel': 'sigmoid'}
+0.408 (+/-0.000) for {'C': 0.01, 'gamma': 0.001, 'kernel': 'poly'}
+0.408 (+/-0.000) for {'C': 0.01, 'gamma': 0.01, 'kernel': 'rbf'}
+0.408 (+/-0.000) for {'C': 0.01, 'gamma': 0.01, 'kernel': 'sigmoid'}
+0.408 (+/-0.000) for {'C': 0.01, 'gamma': 0.01, 'kernel': 'poly'}
+0.478 (+/-0.008) for {'C': 0.01, 'gamma': 0.1, 'kernel': 'rbf'}
+0.416 (+/-0.011) for {'C': 0.01, 'gamma': 0.1, 'kernel': 'sigmoid'}
+0.435 (+/-0.003) for {'C': 0.01, 'gamma': 0.1, 'kernel': 'poly'}
+0.408 (+/-0.000) for {'C': 0.1, 'gamma': 0.001, 'kernel': 'rbf'}
+0.408 (+/-0.000) for {'C': 0.1, 'gamma': 0.001, 'kernel': 'sigmoid'}
+0.408 (+/-0.000) for {'C': 0.1, 'gamma': 0.001, 'kernel': 'poly'}
+0.475 (+/-0.006) for {'C': 0.1, 'gamma': 0.01, 'kernel': 'rbf'}
+0.444 (+/-0.006) for {'C': 0.1, 'gamma': 0.01, 'kernel': 'sigmoid'}
+0.408 (+/-0.000) for {'C': 0.1, 'gamma': 0.01, 'kernel': 'poly'}
+0.625 (+/-0.017) for {'C': 0.1, 'gamma': 0.1, 'kernel': 'rbf'}
+0.477 (+/-0.021) for {'C': 0.1, 'gamma': 0.1, 'kernel': 'sigmoid'}
+0.539 (+/-0.021) for {'C': 0.1, 'gamma': 0.1, 'kernel': 'poly'}
+0.475 (+/-0.006) for {'C': 1, 'gamma': 0.001, 'kernel': 'rbf'}
+0.443 (+/-0.005) for {'C': 1, 'gamma': 0.001, 'kernel': 'sigmoid'}
+0.408 (+/-0.000) for {'C': 1, 'gamma': 0.001, 'kernel': 'poly'}
+0.525 (+/-0.017) for {'C': 1, 'gamma': 0.01, 'kernel': 'rbf'}
+0.505 (+/-0.015) for {'C': 1, 'gamma': 0.01, 'kernel': 'sigmoid'}
+0.408 (+/-0.000) for {'C': 1, 'gamma': 0.01, 'kernel': 'poly'}
+0.733 (+/-0.042) for {'C': 1, 'gamma': 0.1, 'kernel': 'rbf'}
+0.387 (+/-0.037) for {'C': 1, 'gamma': 0.1, 'kernel': 'sigmoid'}
+0.660 (+/-0.035) for {'C': 1, 'gamma': 0.1, 'kernel': 'poly'}
+Detailed classification report:
+Scores based on full test set
+              precision    recall  f1-score   support
+
+           1       0.66      0.79      0.72      4125
+           2       0.80      0.65      0.71      4935
+           3       0.65      0.82      0.73      4050
+           4       0.76      0.69      0.72      9840
+
+   micro avg       0.72      0.72      0.72     22950
+   macro avg       0.72      0.74      0.72     22950
+weighted avg       0.73      0.72      0.72     22950
+
+
+# Tuning hyper-parameters for accuracy
+Best parameters found based on training set
+{'C': 1, 'gamma': 0.1, 'kernel': 'rbf'}
+Grid scores on training set:
+0.595 (+/-0.016) for {'C': 0.01, 'gamma': 0.01, 'kernel': 'rbf'}
+0.536 (+/-0.007) for {'C': 0.01, 'gamma': 0.01, 'kernel': 'sigmoid'}
+0.420 (+/-0.000) for {'C': 0.01, 'gamma': 0.01, 'kernel': 'poly'}
+0.844 (+/-0.026) for {'C': 0.01, 'gamma': 0.1, 'kernel': 'rbf'}
+0.465 (+/-0.017) for {'C': 0.01, 'gamma': 0.1, 'kernel': 'sigmoid'}
+0.733 (+/-0.009) for {'C': 0.01, 'gamma': 0.1, 'kernel': 'poly'}
+0.752 (+/-0.036) for {'C': 0.1, 'gamma': 0.01, 'kernel': 'rbf'}
+0.603 (+/-0.014) for {'C': 0.1, 'gamma': 0.01, 'kernel': 'sigmoid'}
+0.422 (+/-0.000) for {'C': 0.1, 'gamma': 0.01, 'kernel': 'poly'}
+0.929 (+/-0.021) for {'C': 0.1, 'gamma': 0.1, 'kernel': 'rbf'}
+0.436 (+/-0.018) for {'C': 0.1, 'gamma': 0.1, 'kernel': 'sigmoid'}
+0.867 (+/-0.019) for {'C': 0.1, 'gamma': 0.1, 'kernel': 'poly'}
+0.838 (+/-0.017) for {'C': 1, 'gamma': 0.01, 'kernel': 'rbf'}
+0.609 (+/-0.021) for {'C': 1, 'gamma': 0.01, 'kernel': 'sigmoid'}
+0.529 (+/-0.005) for {'C': 1, 'gamma': 0.01, 'kernel': 'poly'}
+0.958 (+/-0.013) for {'C': 1, 'gamma': 0.1, 'kernel': 'rbf'}
+0.420 (+/-0.019) for {'C': 1, 'gamma': 0.1, 'kernel': 'sigmoid'}
+0.896 (+/-0.014) for {'C': 1, 'gamma': 0.1, 'kernel': 'poly'}
+Detailed classification report:
+Scores based on full test set
+              precision    recall  f1-score   support
+
+           1       0.96      0.97      0.97      3000
+           2       0.96      0.97      0.96      3045
+           3       0.92      0.92      0.92      2970
+           4       0.97      0.95      0.96      6285
+
+   micro avg       0.96      0.96      0.96     15300
+   macro avg       0.95      0.96      0.95     15300
+weighted avg       0.96      0.96      0.96     15300
