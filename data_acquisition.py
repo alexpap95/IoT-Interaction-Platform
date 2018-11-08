@@ -6,7 +6,7 @@ import json
 
 
 ## Change to Sensor Address (Without :)
-sensor_mac = "B0B448C44883"
+sensor_mac = "B0B448C92601"
 fuse = Fusion(lambda start, end: start-end)
 # The callback for when the client receives a CONNACK response from the server.
 
@@ -14,13 +14,6 @@ def gdata():
     # Return [[ax, ay, az], [gx, gy, gz], [mx, my, mz], timestamp]
     # from whatever the device supplies (in this case JSON)
     with open('mpudata', 'r') as f:
-        line = f.readline()  # An app would do a blocking read of remote data
-        while line:
-            yield json.loads(line)  # Convert foreign data format.
-            line = f.readline()  # Blocking read.
-            
-def init_quat():
-    with open('centre', 'r') as f:
         line = f.readline()  # An app would do a blocking read of remote data
         while line:
             yield json.loads(line)  # Convert foreign data format.
@@ -108,10 +101,6 @@ if __name__ == '__main__':
         fuse.calibrate(getmag)
         i-=1    
     print('Cal done. Magnetometer bias vector:', fuse.magbias, fuse.scale)
-    get_centre=init_quat()
-    centre=next(get_centre)
-    fuse.set_centre(centre)
-    print("Centre initialised")
     t=myThread(fuse)
     t.daemon=True
     t.start()

@@ -11,7 +11,6 @@ class Fusion(object):
         GyroMeasError = radians(40)         # Original code indicates this leads to a 2 sec response time
         self.beta = sqrt(3.0 / 4.0) * GyroMeasError  # compute beta (see README)
         self.c=15
-        self.T=0
         
     def calibrate(self, mag):
         magxyz = tuple(mag)
@@ -23,10 +22,6 @@ class Fusion(object):
         self.avg_delta = (self.avg_del[0] + self.avg_del[1] + self.avg_del[2]) / 3
         self.scale = (self.avg_delta/self.avg_del[0] if self.avg_del[0] else 0, self.avg_delta/self.avg_del[1] if self.avg_del[1] else 0,
          self.avg_delta/self.avg_del[2] if self.avg_del[2] else 0)
-
-    def set_centre(self,qq):
-        quat = tuple(qq)
-        self.cen = [quat[0], quat[1], quat[2], quat[3]]   # vector to hold centre
         
     def update(self, accel, gyro, mag, ts=None):     # 3-tuples (x, y, z) for accel, gyro and mag data
         my, mx, mz = ((mag[x] - self.magbias[x])*self.scale[x] for x in range(3)) # Units irrelevant (normalised)
@@ -124,33 +119,15 @@ class Fusion(object):
         
         self.q = q1 * norm, q2 * norm, q3 * norm, q4 * norm
         
-        cq1 = self.q[0]*self.cen[0]-self.q[1]*self.cen[1]-self.q[2]*self.cen[2]-self.q[3]*self.cen[3]
-        cq2 = self.q[0]*self.cen[1]+self.q[1]*self.cen[0]-self.q[2]*self.cen[3]+self.q[3]*self.cen[2]
-        cq3 = self.q[0]*self.cen[2]+self.q[1]*self.cen[3]+self.q[2]*self.cen[0]-self.q[3]*self.cen[1]
-        cq4 = self.q[0]*self.cen[3]-self.q[1]*self.cen[2]+self.q[2]*self.cen[1]+self.q[3]*self.cen[0]
-        
-        normc = 1 / sqrt(cq1 * cq1 + cq2 * cq2 + cq3 * cq3 + cq4 * cq4)
-        self.cq = cq1 * normc, cq2 * normc, cq3 * normc, cq4 * normc
-      
-        
-        accx=(accel[0]/9.8)*1000
-        accy=(accel[1]/9.8)*1000
-        accz=(accel[2]/9.8)*1000
-        gyrx=gyro[0]*1000
-        gyry=gyro[1]*1000
-        gyrz=gyro[2]*1000
-        self.det=deltat
-        self.data=[1.0,self.T,accx,accy,accz,gyrx,gyry,gyrz,cq1*1000,cq2*1000,cq3*1000,cq4*1000]
+        self.data=[2.0,ax,ay,az,gx,gy,gz,mx,my,mz,q1,q2,q3,q4]
 
     def write_to_file(self):
-        with open('lekkas.csv', 'a+', newline='') as f:
+        with open('mydata.csv', 'a+', newline='') as f:
             wr = csv.writer(f, quoting=csv.QUOTE_MINIMAL)
             wr.writerow(self.data)
             print(str(self.data))
             self.c-=1
-            self.T+=self.det*1000
             if (self.c==0):
-                self.T=0
                 self.c=15
             f.close()
 
