@@ -61,7 +61,7 @@ def process_dataset_file(dataset):
     data_x[np.isnan(data_x)] = 0
 
     # All sensor channels are normalized
-    data_x = normalize(data_x, NORM_MAX_THRESHOLDS, NORM_MIN_THRESHOLDS)
+#    data_x = normalize(data_x, NORM_MAX_THRESHOLDS, NORM_MIN_THRESHOLDS)
     return data_x, data_y
 
 def generate_data(data, target_filename):
@@ -81,7 +81,7 @@ def generate_data(data, target_filename):
 
     # Dataset is segmented into train and test
     count = len(open(data).readlines())
-    nb_training_samples = int(round(0.7*count))
+    nb_training_samples = int(round(0.8*count))
     X_train, y_train = data_x[:nb_training_samples,:], data_y[:nb_training_samples]
     X_test, y_test = data_x[nb_training_samples:,:], data_y[nb_training_samples:]
 

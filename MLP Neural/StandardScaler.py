@@ -10,6 +10,7 @@ import numpy as np
 import pickle as pickle
 from pandas import Series
 import random
+import csv
 
 # Hardcoded number of sensor channels employed in the OPPORTUNITY challenge
 NB_SENSOR_CHANNELS = 10

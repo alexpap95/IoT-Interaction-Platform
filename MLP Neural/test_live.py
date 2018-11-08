@@ -10,7 +10,7 @@ NORM_MAX_THRESHOLDS = [200, 200, 200, 250000, 250000, 250000, 100, 100, 100, 100
 
 NORM_MIN_THRESHOLDS = [-200, -200, -200, -250000, -250000, -250000, -100, -100, -100, -100]
 
-t=r=c=0
+predictions=np.full(15,4)
 
 def normalize(data, max_list, min_list):
     max_list, min_list = np.array(max_list), np.array(min_list)
@@ -30,32 +30,22 @@ def process(data):
     # Remaining missing data are converted to zero
     data_x[np.isnan(data_x)] = 0
     # All sensor channels are normalized
-    data_x = normalize(data_x, NORM_MAX_THRESHOLDS, NORM_MIN_THRESHOLDS)
+#    data_x = normalize(data_x, NORM_MAX_THRESHOLDS, NORM_MIN_THRESHOLDS)
     return data_x
 
 
 def generate_data(data):
-    global t,r,c
+    global predictions
     data_x = process(data)
     data_x = data_x.reshape(1,-1)
-    if (int(clf.predict(data_x))==1):
-        t+=1
-        r=c=0
-        if (t==4):
-            print ("Left to Right Twist")
-            t=0
-    elif ((int(clf.predict(data_x))==2)):
-        r+=1
-        t=c=0
-        if (r==4):
-            print ("Side Raise")
-            r=0
-    elif ((int(clf.predict(data_x))==3)):
-        c+=1
-        t=r=0
-        if (c==4):
-            print ("Straight to Left Curl")
-            c=0
-    else:
-        t=r=c=0
+    predictions = np.delete(predictions, 0)
+    predictions = np.append(predictions, int(clf.predict(data_x)))
+    counts = np.bincount(predictions)
+    if (np.argmax(counts)==1):
+        print ("Left to Right Twist")
+    elif (np.argmax(counts)==2):
+        print ("Side Raise")
+    elif (np.argmax(counts)==3):
+       print ("Straight to Left Curl")
+            
    
