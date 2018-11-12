@@ -119,7 +119,7 @@ class Fusion(object):
         
         self.q = q1 * norm, q2 * norm, q3 * norm, q4 * norm
         
-        self.data=[2.0,ax,ay,az,gx,gy,gz,mx,my,mz,q1,q2,q3,q4]
+        self.data=[4.0,ax,ay,az,gx,gy,gz,mx,my,mz,q1,q2,q3,q4]
 
     def write_to_file(self):
         with open('mydata.csv', 'a+', newline='') as f:

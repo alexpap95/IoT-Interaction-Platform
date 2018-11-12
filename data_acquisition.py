@@ -63,7 +63,7 @@ def main():
     client.on_connect = on_connect
     client.on_message = on_message
     client.on_disconnect = on_disconnect
-    client.connect("192.168.1.8", 1883, 60)
+    client.connect("192.168.1.103", 1883, 60)
     client.loop_forever(0.01)
 
 class myThread(threading.Thread):
@@ -71,26 +71,26 @@ class myThread(threading.Thread):
         super(myThread, self).__init__()
         self.fuse=fuse
     def run(self):
-        time.sleep(1)
-#        for n in range(3600):
-#            time.sleep(0.1)
-#            self.fuse.write_to_file()
-#        print("done")
-        i=15
-        N=1
-        while (True):
+        time.sleep(5)
+        for n in range(7200):
             time.sleep(0.1)
-            if (i==15):
-                input ("Rep " + str(N) + " - Press Enter...")
-                print ("Ready")
-                time.sleep(0.3)
-                print ("GO")
-                time.sleep(0.3)
             self.fuse.write_to_file()
-            i-=1
-            if (i==0):
-                i=15
-                N+=1
+        print("done")
+#        i=15
+#        N=1
+#        while (True):
+#            time.sleep(0.1)
+#            if (i==15):
+#                input ("Rep " + str(N) + " - Press Enter...")
+#                print ("Ready")
+#                time.sleep(0.3)
+#                print ("GO")
+#                time.sleep(0.3)
+#            self.fuse.write_to_file()
+#            i-=1
+#            if (i==0):
+#                i=15
+#                N+=1
 
 if __name__ == '__main__':
     i=200

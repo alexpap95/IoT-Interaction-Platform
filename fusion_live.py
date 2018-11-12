@@ -11,9 +11,7 @@ class Fusion(object):
         self.q = [1.0, 0.0, 0.0, 0.0]       # vector to hold quaternion
         GyroMeasError = radians(40)         # Original code indicates this leads to a 2 sec response time
         self.beta = sqrt(3.0 / 4.0) * GyroMeasError  # compute beta (see README)
-        self.c=15
-        self.T=0
-        self.gesture=np.zeros((15,10))
+        self.gesture=np.zeros((15,13))
         
     def calibrate(self, mag):
         magxyz = tuple(mag)
@@ -26,10 +24,6 @@ class Fusion(object):
         self.scale = (self.avg_delta/self.avg_del[0] if self.avg_del[0] else 0, self.avg_delta/self.avg_del[1] if self.avg_del[1] else 0,
          self.avg_delta/self.avg_del[2] if self.avg_del[2] else 0)
 
-    def set_centre(self,qq):
-        quat = tuple(qq)
-        self.cen = [quat[0], quat[1], quat[2], quat[3]]   # vector to hold centre
-        
     def update(self, accel, gyro, mag, ts=None):     # 3-tuples (x, y, z) for accel, gyro and mag data
         my, mx, mz = ((mag[x] - self.magbias[x])*self.scale[x] for x in range(3)) # Units irrelevant (normalised)
         ax, ay, az = accel                  # Units irrelevant (normalised)
@@ -125,29 +119,8 @@ class Fusion(object):
         norm = 1 / sqrt(q1 * q1 + q2 * q2 + q3 * q3 + q4 * q4)    # normalise quaternion
         
         self.q = q1 * norm, q2 * norm, q3 * norm, q4 * norm
-        
-        cq1 = self.q[0]*self.cen[0]-self.q[1]*self.cen[1]-self.q[2]*self.cen[2]-self.q[3]*self.cen[3]
-        cq2 = self.q[0]*self.cen[1]+self.q[1]*self.cen[0]-self.q[2]*self.cen[3]+self.q[3]*self.cen[2]
-        cq3 = self.q[0]*self.cen[2]+self.q[1]*self.cen[3]+self.q[2]*self.cen[0]-self.q[3]*self.cen[1]
-        cq4 = self.q[0]*self.cen[3]-self.q[1]*self.cen[2]+self.q[2]*self.cen[1]+self.q[3]*self.cen[0]
-        
-        normc = 1 / sqrt(cq1 * cq1 + cq2 * cq2 + cq3 * cq3 + cq4 * cq4)
-        self.cq = cq1 * normc, cq2 * normc, cq3 * normc, cq4 * normc
-      
-        if (self.c<15 and self.c>0):
-            self.T+=deltat*1000
-        else:
-            self.T=0
-            self.c=15
-        
-        accx=(accel[0]/9.8)*1000
-        accy=(accel[1]/9.8)*1000
-        accz=(accel[2]/9.8)*1000
-        gyrx=gyro[0]*1000
-        gyry=gyro[1]*1000
-        gyrz=gyro[2]*1000
-        
-        self.data=[accx,accy,accz,gyrx,gyry,gyrz,cq1*1000,cq2*1000,cq3*1000,cq4*1000]
+                
+        self.data=[ax,ay,az,gx,gy,gz,mx,my,mz,q1,q2,q3,q4]
         self.gesture = np.delete(self.gesture, 0, 0)
         self.gesture = np.vstack((self.gesture, self.data))
         generate_data(self.gesture)     

@@ -1,9 +1,11 @@
 import numpy as np
 import pickle as pickle
 from sklearn.neural_network import MLPClassifier
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import classification_report
 from preprocess_data import generate_data
 from sklearn.externals import joblib
+
+
 
 def load_dataset(filename):
 
@@ -27,7 +29,7 @@ def load_dataset(filename):
     return X_train, y_train, X_test, y_test
 
 
-generate_data('reduced_dataset.csv', 'dataset.data')
+generate_data('data_wnoise.csv', 'dataset.data')
 print("Loading data...")
 X_train, y_train, X_test, y_test = load_dataset('dataset.data')
 
@@ -56,14 +58,14 @@ for i in range(15, y_test.shape[0], 15):
 y_test_mlp = first_conc_y
 
 
-clf = MLPClassifier(activation='tanh', hidden_layer_sizes=(100,100,100), max_iter=200, alpha=0.0001,
-                     solver='adam', verbose=1, random_state=21, tol=0.00000001)
+clf = MLPClassifier(activation='tanh', hidden_layer_sizes=(100,100,100), max_iter=400, alpha=0.001,
+                     solver='adam', verbose=1, random_state=21, tol=0.000000001)
 
 
 clf.fit(X_train_mlp, y_train_mlp.flatten())
 
 y_pred_mlp = clf.predict(X_test_mlp)
-print (accuracy_score(y_test_mlp.flatten(), y_pred_mlp))
+print (classification_report(y_test_mlp.flatten(), y_pred_mlp))
 joblib.dump(clf, 'MLP.joblib')
 
 

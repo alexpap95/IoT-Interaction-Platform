@@ -18,13 +18,6 @@ def gdata():
             yield json.loads(line)  # Convert foreign data format.
             line = f.readline()  # Blocking read.
             
-def init_quat():
-    with open('centre', 'r') as f:
-        line = f.readline()  # An app would do a blocking read of remote data
-        while line:
-            yield json.loads(line)  # Convert foreign data format.
-            line = f.readline()  # Blocking read.
-            
 def s16(value):
 	return -(value & 0x8000) | (value & 0x7fff)
 		
@@ -65,7 +58,7 @@ def main():
     client.on_connect = on_connect
     client.on_message = on_message
     client.on_disconnect = on_disconnect
-    client.connect("192.168.1.8", 1883, 60)
+    client.connect("192.168.1.103", 1883, 60)
     client.loop_forever(0.01)
 
 
@@ -78,8 +71,4 @@ if __name__ == '__main__':
         fuse.calibrate(getmag)
         i-=1    
     print('Cal done. Magnetometer bias vector:', fuse.magbias, fuse.scale)
-    get_centre=init_quat()
-    centre=next(get_centre)
-    fuse.set_centre(centre)
-    print("Centre initialised")
     main()
