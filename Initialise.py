@@ -5,9 +5,9 @@ from fusion_init import Fusion
 import numpy as np
 import quaternion 
 
-sensor_mac = "B0B448C44883"
+sensor_mac = "B0B448C92601"
 fuse = Fusion(lambda start, end: start-end)
-counter=40
+counter=50
 
 def gdata():
     # Return [[ax, ay, az], [gx, gy, gz], [mx, my, mz], timestamp]
@@ -37,7 +37,7 @@ def main():
     client.on_connect = on_connect
     client.on_message = on_message
     client.on_disconnect = on_disconnect
-    client.connect("192.168.1.8", 1883, 60)
+    client.connect("192.168.1.103", 1883, 60)
     client.loop_forever(0.01)
 
 def s16(value):

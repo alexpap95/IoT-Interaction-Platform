@@ -1,7 +1,7 @@
 import paho.mqtt.client as mqtt
 import time
 ## Change to Sensor Address (Without :)
-sensor_mac = "B0B448C44883"
+sensor_mac = "B0B448C92601"
 i=200
 # The callback for when the client receives a CONNACK response from the server.
 def s16(value):
@@ -43,5 +43,5 @@ client.username_pw_set("wsncontroller", "wSnC0ct1r")
 client.on_connect = on_connect
 client.on_message = on_message
 client.on_disconnect = on_disconnect
-client.connect("192.168.1.200", 1883, 60)
+client.connect("192.168.1.103", 1883, 60)
 client.loop_forever(0.1)
