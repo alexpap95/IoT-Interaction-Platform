@@ -130,14 +130,17 @@ class Fusion(object):
         self.predictions = np.delete(self.predictions, 0)
         self.predictions = np.append(self.predictions, int(self.clf.predict(data_x)))
         counts = np.bincount(self.predictions)
-        if (counts[1]>8):
+        if (counts[1]>7):
             print ("Left to Right Twist")
             self.predictions=np.full(15,4)
-        if (counts[2]>8):
+        if (counts[2]>6):
             print ("Side Raise")
             self.predictions=np.full(15,4)
-        if (counts[3]>10):
+        if (counts[3]>8):
             print ("Straight to Left Curl")
+            self.predictions=np.full(15,4)
+        if (counts[5]>8):
+            print ("Straight Drop")
             self.predictions=np.full(15,4)
 
 class DeltaT():

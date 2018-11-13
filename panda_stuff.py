@@ -19,22 +19,25 @@ col_names=['ID','accx','accy','accz','gyrox','gyroy','gyroz','magx','magy','magz
 #df = pd.read_csv('full_dataset.csv', names=col_names, header=None)
 #print (df['ID'].value_counts())
 #df1 = df[df['ID']==4.0]
-df = pd.read_csv('mydata.csv', names=col_names, header=None)
-#df2=df1.tail(10800)
-#df=df2.reindex(np.random.permutation(df2.index))
-#df=df1.append(df)
-#df.to_csv('dataset.csv',index=None,header=None)
-df2= df['ID']
-df1=df.drop(df.columns[0], axis=1)
-mu, sigma = 0, 0.1 
-# creating a noise with the same dimension as the dataset (2,2) 
-noise = np.random.normal(mu, sigma, [46800,13])
-new = df1+noise
-df3 = new.join(df2, lsuffix='_df2', rsuffix='_new')
-df4 = df3[col_names]
-df5=df.append(df4)
-df5.to_csv('data.csv',index=None,header=None)
-print ((df5['ID'].value_counts())/15)
+df = pd.read_csv('data.csv', names=col_names, header=None)
+print ((df['ID'].value_counts())//15)
+df1=df[df['ID']==4.0]
+df2=df1.reindex(np.random.permutation(df1.index))
+df=df.append(df2)
+print ((df['ID'].value_counts())//15)
+df.to_csv('dataset.csv',index=None,header=None)
+#df2= df['ID']
+#df1=df.drop(df.columns[0], axis=1)
+#mu, sigma = 0, 0.01 
+## creating a noise with the same dimension as the dataset (2,2) 
+#noise = np.random.normal(mu, sigma, [72000,13])
+#new = df1+noise
+#df3 = new.join(df2, lsuffix='_df2', rsuffix='_new')
+#df4 = df3[col_names]
+#df5=df.append(df4)
+#df5.to_csv('data.csv',index=None,header=None)
+#print ((df['ID'].value_counts())/15)
+#print ((df5['ID'].value_counts())/15)
 #df2= df['ID']
 #df1=df.drop(df.columns[0], axis=1)
 #mu, sigma = 0, 0.001 
