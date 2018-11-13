@@ -29,7 +29,7 @@ def load_dataset(filename):
     return X_train, y_train, X_test, y_test
 
 
-generate_data('data_wnoise.csv', 'dataset.data')
+generate_data('mydata.csv', 'dataset.data')
 print("Loading data...")
 X_train, y_train, X_test, y_test = load_dataset('dataset.data')
 
@@ -58,7 +58,7 @@ for i in range(15, y_test.shape[0], 15):
 y_test_mlp = first_conc_y
 
 
-clf = MLPClassifier(activation='tanh', hidden_layer_sizes=(100,100,100), max_iter=400, alpha=0.001,
+clf = MLPClassifier(activation='tanh', hidden_layer_sizes=(100,100,100), max_iter=600, alpha=0.001,
                      solver='adam', verbose=1, random_state=21, tol=0.000000001)
 
 

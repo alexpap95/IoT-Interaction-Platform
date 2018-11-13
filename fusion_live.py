@@ -1,10 +1,11 @@
 from math import sqrt, radians
-from test_live import generate_data
 import numpy as np
+from sklearn.externals import joblib
 
 class Fusion(object):
     magmax = [-1000, -1000, -1000]
-    magmin = [1000, 1000, 1000]                    
+    magmin = [1000, 1000, 1000]    
+               
     def __init__(self, timediff=None):
         self.magbias = (0, 0, 0)            # local magnetic bias factors: set from calibration`               
         self.deltat = DeltaT(timediff)      # Time between updates
@@ -12,6 +13,8 @@ class Fusion(object):
         GyroMeasError = radians(40)         # Original code indicates this leads to a 2 sec response time
         self.beta = sqrt(3.0 / 4.0) * GyroMeasError  # compute beta (see README)
         self.gesture=np.zeros((15,13))
+        self.predictions=np.full(15,4)
+        self.clf = joblib.load('MLP.joblib') 
         
     def calibrate(self, mag):
         magxyz = tuple(mag)
@@ -123,7 +126,19 @@ class Fusion(object):
         self.data=[ax,ay,az,gx,gy,gz,mx,my,mz,q1,q2,q3,q4]
         self.gesture = np.delete(self.gesture, 0, 0)
         self.gesture = np.vstack((self.gesture, self.data))
-        generate_data(self.gesture)     
+        data_x = self.gesture.reshape(1,-1)
+        self.predictions = np.delete(self.predictions, 0)
+        self.predictions = np.append(self.predictions, int(self.clf.predict(data_x)))
+        counts = np.bincount(self.predictions)
+        if (counts[1]>8):
+            print ("Left to Right Twist")
+            self.predictions=np.full(15,4)
+        if (counts[2]>8):
+            print ("Side Raise")
+            self.predictions=np.full(15,4)
+        if (counts[3]>10):
+            print ("Straight to Left Curl")
+            self.predictions=np.full(15,4)
 
 class DeltaT():
     def __init__(self, timediff):

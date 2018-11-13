@@ -13,13 +13,13 @@ def generate_data(data):
     predictions = np.delete(predictions, 0)
     predictions = np.append(predictions, int(clf.predict(data_x)))
     counts = np.bincount(predictions)
-    if (counts[1]>3):
+    if (counts[1]>5):
         print ("Left to Right Twist")
         predictions=np.full(15,4)
-    if (counts[2]>3):
+    if (counts[2]>5):
         print ("Side Raise")
         predictions=np.full(15,4)
-    if (counts[3]>3):
+    if (counts[3]>5):
         print ("Straight to Left Curl")
         predictions=np.full(15,4)
             

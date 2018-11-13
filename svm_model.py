@@ -1,30 +1,30 @@
 # Results of kaggle competition are evaluated using the logloss
 # metric, hence this score metric will be used for gridsearchcv 
 
-#from sklearn.neural_network import MLPClassifier
-from sklearn.svm import SVC
+from sklearn.neural_network import MLPClassifier
+#from sklearn.svm import SVC
 from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import classification_report
-from StandardScaler import generate_data
+from preprocess_data import generate_data
 import pickle as pickle
 import numpy as np
 
 def svm_superparam_selection(X_train, X_test, y_train, y_test, nfolds, score_evals):
-#    parameter_space = {
-#    'hidden_layer_sizes': [(100,100,100)],
-#    'activation': ['tanh'],
-#    'solver': ['adam'],
-#    'alpha': [0.0001, 0.001, 0.01],
-#    'learning_rate': ['constant'],
-#    }
-    param_grid = {
-            'C': [0.01, 0.1, 1],
-            'kernel': ['rbf', 'sigmoid', 'poly'],
-            'gamma': [0.01, 0.1] }
+    parameter_space = {
+        'hidden_layer_sizes': [(50,50,50), (50,100,50), (100,100,100)],
+        'activation': ['tanh', 'relu'],
+        'solver': ['sgd', 'adam'],
+        'alpha': [0.0001, 0.001, 0.05],
+        'learning_rate': ['constant'],
+    }
+#    param_grid = {
+#            'C': [0.01, 0.1, 1],
+#            'kernel': ['rbf', 'sigmoid', 'poly'],
+#            'gamma': [0.01, 0.1] }
     bestscore_dict = {}
-    # mlp=MLPClassifier(max_iter=200)
+    mlp=MLPClassifier(max_iter=200)
     for score in score_evals:
-        grid_search_clf = GridSearchCV(SVC(), param_grid, cv=nfolds, scoring=score, verbose=2, n_jobs=3)
+        grid_search_clf = GridSearchCV(mlp, parameter_space, cv=nfolds, scoring=score, verbose=3, n_jobs=3)
         grid_search_clf.fit(X_train, y_train)
         print('# Tuning hyper-parameters for %s' % score)
         print('Best parameters found based on training set')
@@ -47,7 +47,7 @@ def svm_superparam_selection(X_train, X_test, y_train, y_test, nfolds, score_eva
 
 def main():
     
-    generate_data('datanew.csv', 'dataset.data')
+    generate_data('data_wnoise.csv', 'dataset.data')
     print("Loading data...")
     X_train, y_train, X_test, y_test = load_dataset('dataset.data')
     # hyperparameter optimization for SVM classifier
