@@ -4,6 +4,7 @@ import time, pygame
 import numpy as np
 from operator import itemgetter
 from fusion import Fusion
+import quaternion
 
 black = (0,0,0)
 red = (255,0,0)
@@ -237,7 +238,7 @@ class cyber_glove():
         t = []
         for v in self.vertices:
             # Rotate the point around z axis, around X axis roll,  around Y axis pitch
-            r = v.rotate(fuse. cq)
+            r = v.rotate(fuse.cq)
             # Transform the point from 3D to 2D
             p = r.project(740, 700, 256, 2.8)
             # Put the point in the list of transformed vertices
