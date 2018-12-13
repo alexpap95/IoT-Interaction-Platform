@@ -14,12 +14,13 @@ fuse = Fusion(lambda start, end: start-end)
 oldpitch=[0]
 oldroll=[0]
 oldheading=[0]
-samples=5
+samples=10
 j=1
 k=0
 sumpitch=0
 sumroll=0
 sumheading=0
+c=10
 
 
 def gdata():
@@ -263,7 +264,7 @@ class cyber_glove():
             pygame.draw.polygon(self.screen,self.colors[face_index],pointlist)
 
     def run(self):
-        global fuse,oldpitch,oldroll,oldheading,client,j,k,sumpitch,sumroll,sumheading
+        global fuse,oldpitch,oldroll,oldheading,client,j,k,sumpitch,sumroll,sumheading,c
         if (j<samples):
             oldpitch.append(fuse.pitch)
             oldroll.append(fuse.roll)
@@ -285,8 +286,8 @@ class cyber_glove():
             sumroll+=oldroll[k]
             sumheading+=oldheading[k]
             k+=1
-        self.pitch=sumpitch//samples
-        self.roll=sumroll//samples
+        self.pitch=sumpitch//samples+2
+        self.roll=sumroll//samples-1
         self.heading=sumheading//samples
         '''DRAW THE GRAPHICS'''
         #draw the graphical enviroment white
@@ -301,7 +302,10 @@ class cyber_glove():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 client.disconnect()
-                
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:
+                    pygame.image.save(self.screen, 'screenshot' + str(c) + '.jpg')
+                    c+=1
 class Nodes:
     def __init__(self, x = 0, y = 0, z = 0):
         self.x, self.y, self.z = float(x), float(y), float(z)
