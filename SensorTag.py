@@ -20,6 +20,7 @@ k=0
 sumpitch=0
 sumroll=0
 sumheading=0
+c=0
 
 
 def gdata():
@@ -51,7 +52,7 @@ def main():
     client.on_connect = on_connect
     client.on_message = on_message
     client.on_disconnect = on_disconnect
-    client.connect("192.168.1.103", 1883, 60)
+    client.connect("192.168.1.132", 1883, 60)
     client.loop_forever(0.01)
 
 def s16(value):
@@ -257,7 +258,7 @@ class cyber_glove():
             pygame.draw.polygon(self.screen,self.colors[face_index],pointlist)
 
     def run(self):
-        global fuse,oldpitch,oldroll,oldheading,client,j,k,sumpitch,sumroll,sumheading
+        global fuse,oldpitch,oldroll,oldheading,client,j,k,sumpitch,sumroll,sumheading,c
         if (j<samples):
             oldpitch.append(fuse.pitch)
             oldroll.append(fuse.roll)
@@ -279,9 +280,9 @@ class cyber_glove():
             sumroll+=oldroll[k]
             sumheading+=oldheading[k]
             k+=1
-        self.pitch=sumpitch//samples
-        self.roll=sumroll//samples
-        self.heading=sumheading//samples
+        self.pitch=sumpitch//samples+5
+        self.roll=sumroll//samples-2
+        self.heading=sumheading//samples+78
         '''DRAW THE GRAPHICS'''
         #draw the graphical enviroment white
         pygame.draw.rect(self.screen,(255,255,255),(0,0,740,700))
@@ -295,6 +296,14 @@ class cyber_glove():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 client.disconnect()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:
+                    pygame.image.save(self.screen,'screenshot' +str(c)+ '.jpg')
+                    c+=8
+                    
+                    
+                
+                
                 
 class Nodes:
     def __init__(self, x = 0, y = 0, z = 0):
