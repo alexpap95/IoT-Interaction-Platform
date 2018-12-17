@@ -17,7 +17,7 @@ def load_dataset(filename):
 
     # Dataset is segmented into train and test
     count = len(open(filename).readlines())
-    nb_training_samples = int(round(0.8*count))
+    nb_training_samples = int(round(0.9*count))
     X_train, y_train = data_x[:nb_training_samples,:], data_y[:nb_training_samples]
     X_test, y_test = data_x[nb_training_samples:,:], data_y[nb_training_samples:]
     
@@ -63,7 +63,7 @@ y_test_mlp = first_conc_y
 
 
 clf = MLPClassifier(activation='tanh', hidden_layer_sizes=(100,100,100), max_iter=200, alpha=0.001,
-                     solver='adam', verbose=1, random_state=21, tol=0.000000001)
+                     solver='adam', verbose=1, random_state=21)
 
 
 clf.fit(X_train_mlp, y_train_mlp.flatten())

@@ -2,7 +2,11 @@ import paho.mqtt.client as mqtt
 import time
 from fusion_live import Fusion
 import json
+import atlas_pb2
+import knx_pb2
 
+
+knxGatewayTopic = "aal/events/knx"
 
 ## Change to Sensor Address (Without :)
 sensor_mac = "B0B448C92601"
@@ -20,6 +24,9 @@ def gdata():
             
 def s16(value):
 	return -(value & 0x8000) | (value & 0x7fff)
+
+
+
 		
 def main():
     def on_connect(client, userdata, flags, rc):
@@ -49,16 +56,32 @@ def main():
         gyro= (gyrox,gyroy,gyroz)
         mag = (magx,magy,magz)
         fuse.update(accel,gyro,mag,time.time())
+        if fuse.command!=None:
+            lights(fuse.command)
+            fuse.command=None
     
     def on_disconnect(client,userdata,rc):
         print("Disconnected with result code "+str(rc))
         
+    def lights(command):
+        knx_action = knx_pb2.KnxScadaAction()
+        knx_action.action = knx_pb2._SCADAACTION.values_by_name['WRITE'].number;
+        knx_action.value = command
+        knx_action.object.url = "1/1/4" ## KNX URL --> knx_objects.xlsx
+        knx_action.header.status = atlas_pb2._ATLASMESSAGESTATUS.values_by_name['PENDING'].number;
+        client.publish(knxGatewayTopic, knx_action.SerializeToString(), 0, False)
+        if command=="true":
+            print("LIGHTS ON!")
+        else:
+            print("LIGHTS OFF!")
+   
+    
     client = mqtt.Client("wsncontroller@12345678")
     client.username_pw_set("wsncontroller", "wSnC0ct1r")
     client.on_connect = on_connect
     client.on_message = on_message
     client.on_disconnect = on_disconnect
-    client.connect("192.168.1.103", 1883, 60)
+    client.connect("192.168.1.132", 1883, 60)
     client.loop_forever(0.01)
 
 

@@ -2,6 +2,7 @@ from math import sqrt, radians
 import numpy as np
 from sklearn.externals import joblib
 
+
 class Fusion(object):
     magmax = [-1000, -1000, -1000]
     magmin = [1000, 1000, 1000]    
@@ -15,6 +16,7 @@ class Fusion(object):
         self.gesture=np.zeros((15,13))
         self.predictions=np.full(15,4)
         self.clf = joblib.load('MLP.joblib') 
+        self.command=None
         
     def calibrate(self, mag):
         magxyz = tuple(mag)
@@ -130,18 +132,20 @@ class Fusion(object):
         self.predictions = np.delete(self.predictions, 0)
         self.predictions = np.append(self.predictions, int(self.clf.predict(data_x)))
         counts = np.bincount(self.predictions)
-        if (counts[1]>7):
+        if (counts[1]>8):
             print ("Left to Right Twist")
             self.predictions=np.full(15,4)
-        if (counts[2]>6):
+            self.command="true"
+        if (counts[2]>7):
             print ("Side Raise")
             self.predictions=np.full(15,4)
-        if (counts[3]>8):
+        if (counts[3]>9):
             print ("Straight to Left Curl")
             self.predictions=np.full(15,4)
         if (counts[5]>8):
             print ("Straight Drop")
             self.predictions=np.full(15,4)
+            self.command="false"
 
 class DeltaT():
     def __init__(self, timediff):
@@ -167,3 +171,5 @@ class DeltaT():
         dt = self.timediff(ts, self.start_time)
         self.start_time = ts
         return dt
+
+
