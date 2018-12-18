@@ -16,7 +16,8 @@ class Fusion(object):
         self.gesture=np.zeros((15,13))
         self.predictions=np.full(15,4)
         self.clf = joblib.load('MLP.joblib') 
-        self.command=None
+        self.lights_com=None
+        self.door_com=None
         
     def calibrate(self, mag):
         magxyz = tuple(mag)
@@ -135,17 +136,19 @@ class Fusion(object):
         if (counts[1]>8):
             print ("Left to Right Twist")
             self.predictions=np.full(15,4)
-            self.command="true"
+            self.lights_com="true"
         if (counts[2]>7):
             print ("Side Raise")
             self.predictions=np.full(15,4)
+            self.door_com="true"
         if (counts[3]>9):
             print ("Straight to Left Curl")
             self.predictions=np.full(15,4)
+            self.lights_com="false"
         if (counts[5]>8):
             print ("Straight Drop")
             self.predictions=np.full(15,4)
-            self.command="false"
+            self.door_com="false"
 
 class DeltaT():
     def __init__(self, timediff):

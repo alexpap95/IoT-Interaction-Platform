@@ -56,24 +56,25 @@ def main():
         gyro= (gyrox,gyroy,gyroz)
         mag = (magx,magy,magz)
         fuse.update(accel,gyro,mag,time.time())
-        if fuse.command!=None:
-            lights(fuse.command)
-            fuse.command=None
+        if fuse.lights_com!=None:
+            action(fuse.lights_com, "1/1/4")
+            fuse.lights_com=None
+        if fuse.door_com!=None:
+            action(fuse.door_com, "32/1/8")
+            fuse.door_com=None
+        
     
     def on_disconnect(client,userdata,rc):
         print("Disconnected with result code "+str(rc))
         
-    def lights(command):
+    def action(command, url):
         knx_action = knx_pb2.KnxScadaAction()
         knx_action.action = knx_pb2._SCADAACTION.values_by_name['WRITE'].number;
         knx_action.value = command
-        knx_action.object.url = "1/1/4" ## KNX URL --> knx_objects.xlsx
+        knx_action.object.url = url ## KNX URL --> knx_objects.xlsx
         knx_action.header.status = atlas_pb2._ATLASMESSAGESTATUS.values_by_name['PENDING'].number;
         client.publish(knxGatewayTopic, knx_action.SerializeToString(), 0, False)
-        if command=="true":
-            print("LIGHTS ON!")
-        else:
-            print("LIGHTS OFF!")
+        print(command, url)
    
     
     client = mqtt.Client("wsncontroller@12345678")
