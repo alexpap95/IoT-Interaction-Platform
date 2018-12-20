@@ -10,7 +10,7 @@ class Fusion(object):
     def __init__(self, timediff=None):
         self.magbias = (0, 0, 0)            # local magnetic bias factors: set from calibration`               
         self.deltat = DeltaT(timediff)      # Time between updates
-        self.q = [1.0, 0.0, 0.0, 0.0]       # vector to hold quaternion
+        self.q = [1.0, 0.0, 0.0, 0.0]           # vector to hold quaternion
         GyroMeasError = radians(40)         # Original code indicates this leads to a 2 sec response time
         self.beta = sqrt(3.0 / 4.0) * GyroMeasError  # compute beta (see README)
         self.gesture=np.zeros((15,13))
@@ -18,6 +18,8 @@ class Fusion(object):
         self.clf = joblib.load('MLP.joblib') 
         self.lights_com=None
         self.door_com=None
+        self.toggle="false"
+        self.flag=False
         
     def calibrate(self, mag):
         magxyz = tuple(mag)
@@ -136,19 +138,24 @@ class Fusion(object):
         if (counts[1]>8):
             print ("Left to Right Twist")
             self.predictions=np.full(15,4)
-            self.lights_com="true"
+            self.lights_com="false"
         if (counts[2]>7):
             print ("Side Raise")
             self.predictions=np.full(15,4)
-            self.door_com="true"
-        if (counts[3]>9):
+            if self.flag==True:
+                self.toggle="false"
+                self.flag=False
+            else:
+                self.toggle="true"
+                self.flag=True
+        if (counts[3]>8):
             print ("Straight to Left Curl")
             self.predictions=np.full(15,4)
-            self.lights_com="false"
-        if (counts[5]>8):
+            self.lights_com="true"
+        if (counts[5]>7):
             print ("Straight Drop")
             self.predictions=np.full(15,4)
-            self.door_com="false"
+            self.door_com="true"
 
 class DeltaT():
     def __init__(self, timediff):

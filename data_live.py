@@ -62,6 +62,9 @@ def main():
         if fuse.door_com!=None:
             action(fuse.door_com, "32/1/8")
             fuse.door_com=None
+        if fuse.toggle!=None:
+            action(fuse.toggle, "1/1/1")
+            fuse.toggle=None
         
     
     def on_disconnect(client,userdata,rc):
@@ -75,14 +78,13 @@ def main():
         knx_action.header.status = atlas_pb2._ATLASMESSAGESTATUS.values_by_name['PENDING'].number;
         client.publish(knxGatewayTopic, knx_action.SerializeToString(), 0, False)
         print(command, url)
-   
     
     client = mqtt.Client("wsncontroller@12345678")
     client.username_pw_set("wsncontroller", "wSnC0ct1r")
     client.on_connect = on_connect
     client.on_message = on_message
     client.on_disconnect = on_disconnect
-    client.connect("192.168.1.132", 1883, 60)
+    client.connect("192.168.137.181", 1883, 60)
     client.loop_forever(0.01)
 
 
